@@ -1,8 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// Fixed: Correctly initialize with process.env.API_KEY directly as per guidelines.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const getStyleAdvice = async (userPrompt: string) => {
   try {
@@ -10,18 +9,19 @@ export const getStyleAdvice = async (userPrompt: string) => {
       model: 'gemini-3-flash-preview',
       contents: userPrompt,
       config: {
-        systemInstruction: `You are a professional fashion stylist for "Noor Panjabi House", a premium Bangladeshi Panjabi brand. 
-        Your goal is to help customers choose the perfect Panjabi based on their occasion (Eid, Wedding, Jummah, Casual).
-        Keep your tone elegant, respectful, and helpful. 
-        Recommend colors like Emerald Green, Cream, Black, and Navy Blue. 
-        Talk about fabrics like Silk, Cotton, and Jamdani motifs.
-        Mention that Noor Panjabi House offers premium BDT pricing.
-        Keep responses concise (under 3 sentences).`,
+        systemInstruction: `আপনি "পাঞ্জাবী হাউজ" এর একজন পেশাদার স্টাইল কনসালট্যান্ট। 
+        আপনার লক্ষ্য হলো গ্রাহকদের তাদের অনুষ্ঠান (ঈদ, বিয়ে, জুমা, ক্যাজুয়াল) অনুযায়ী সঠিক পাঞ্জাবী বাছাই করতে সাহায্য করা।
+        আপনার কথা হবে মার্জিত, শ্রদ্ধাশীল এবং সাহায্যকারী। 
+        সব সময় বাংলায় উত্তর দেবেন। কোনো ইংরেজি শব্দ ব্যবহার করবেন না।
+        রঙ হিসেবে পান্না সবুজ (Emerald Green), ক্রিম, কালো এবং নেভি ব্লু এর কথা বলুন। 
+        সিল্ক, কটন এবং জামদানি মোটিফের মতো ফেব্রিকের গুরুত্ব তুলে ধরুন।
+        মনে করিয়ে দিন যে পাঞ্জাবী হাউজ এর দাম প্রিমিয়াম কিন্তু সাশ্রয়ী।
+        উত্তর ৩ বাক্যের মধ্যে রাখার চেষ্টা করুন।`,
       },
     });
     return response.text;
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "I'm currently adjusting my sewing machine. Please try again in a moment for expert style advice!";
+    return "আমি দুঃখিত, আমি এই মুহূর্তে স্টাইল পরামর্শ দিতে পারছি না। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন!";
   }
 };

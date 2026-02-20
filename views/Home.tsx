@@ -2,90 +2,94 @@
 import React from 'react';
 import { CATEGORIES } from '../constants';
 import { View } from '../App';
+import ProductCard from '../components/ProductCard';
+import { Product } from '../types';
+import { motion } from 'motion/react';
+import { ArrowRight } from 'lucide-react';
 
 interface HomeProps {
+  products: Product[];
   navigateTo: (view: View) => void;
+  onAddToCart: (product: Product) => void;
+  onBuyNow: (product: Product) => void;
+  onViewProduct: (product: Product) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ navigateTo }) => {
+const Home: React.FC<HomeProps> = ({ products, navigateTo, onAddToCart, onBuyNow, onViewProduct }) => {
+  const featuredProducts = products.slice(0, 6);
+
   return (
-    <div className="animate-fade-in">
+    <div className="overflow-hidden">
       {/* Hero */}
       <section className="relative h-[80vh] md:h-[90vh] flex items-center justify-center overflow-hidden bg-black">
-        <img 
+        <motion.img 
+          initial={{ scale: 1.2, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.7 }}
+          transition={{ duration: 2, ease: "easeOut" }}
           src="https://images.unsplash.com/photo-1621112904887-419379ce6824?q=80&w=2070&auto=format&fit=crop" 
           alt="Premium Panjabi Hero" 
-          className="absolute inset-0 w-full h-full object-cover opacity-70 animate-slow-zoom"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/95 via-emerald-950/20 to-transparent"></div>
         
         <div className="relative z-10 text-center px-4 max-w-4xl">
-          <h2 className="text-amber-400 font-serif italic text-xl md:text-2xl mb-4 tracking-wide animate-slide-down">Elite Traditional Wear</h2>
-          <h3 className="text-white text-4xl md:text-8xl font-serif font-bold mb-8 leading-tight tracking-tighter animate-fade-in-up">
-            Pure <span className="text-amber-500">Bengali</span> <br/> Mastery
-          </h3>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-500">
+          <motion.h2 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-amber-400 font-serif italic text-xl md:text-2xl mb-4 tracking-wide"
+          >
+            অভিজাত ঐতিহ্যবাহী পোশাক
+          </motion.h2>
+          <motion.h3 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="text-white text-4xl md:text-8xl font-serif font-bold mb-8 leading-tight tracking-tighter"
+          >
+            খাঁটি <span className="text-amber-500">বাঙালি</span> <br/> আভিজাত্য
+          </motion.h3>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
             <button 
               onClick={() => navigateTo('shop')}
               className="bg-amber-500 hover:bg-amber-600 text-emerald-950 font-bold px-12 py-5 transition-all rounded-sm uppercase tracking-widest text-sm shadow-2xl active:scale-95"
             >
-              Shop Collection
+              সংগ্রহ দেখুন
             </button>
             <button 
               onClick={() => navigateTo('about')}
               className="bg-transparent border-2 border-white/50 hover:border-white text-white font-bold px-12 py-5 transition-all rounded-sm uppercase tracking-widest text-sm backdrop-blur-md active:scale-95"
             >
-              Our Story
+              আমাদের গল্প
             </button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-12 md:py-16 bg-stone-100/50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-10 md:mb-14">
+            <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-800 tracking-tight">আমাদের প্রোডাক্ট সমূহ</h3>
+            <div className="w-16 h-1 bg-amber-500 mx-auto mt-4"></div>
           </div>
-        </div>
-      </section>
 
-      {/* Categories */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h4 className="text-emerald-800 font-medium tracking-[0.4em] uppercase text-xs mb-3">Curated Selection</h4>
-          <h3 className="text-4xl font-serif font-bold text-stone-800 tracking-tight">The Heritage Series</h3>
-          <div className="w-16 h-1 bg-amber-500 mx-auto mt-5"></div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {CATEGORIES.map((cat, idx) => (
-            <div 
-              key={idx} 
-              onClick={() => navigateTo('shop')}
-              className="group relative overflow-hidden h-[500px] cursor-pointer rounded-sm shadow-xl transition-all duration-700 hover:-translate-y-2"
-            >
-              <img 
-                src={`https://picsum.photos/seed/${cat.slug}lux/600/900`} 
-                alt={cat.name} 
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-[2000ms]"
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
+            {featuredProducts.map((product) => (
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                onAdd={onAddToCart} 
+                onBuyNow={onBuyNow}
+                onViewProduct={onViewProduct}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/10 to-transparent opacity-80"></div>
-              <div className="absolute bottom-8 left-8 right-8">
-                <h5 className="text-white text-2xl font-serif font-bold mb-2">{cat.name}</h5>
-                <p className="text-amber-400 text-[10px] uppercase tracking-[0.3em] font-semibold group-hover:translate-x-3 transition-transform duration-500">Browse &rarr;</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Trust */}
-      <section className="py-24 bg-emerald-950 text-stone-100 border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-          {[
-            { label: "Elite Quality", desc: "100% Pure Fabric", icon: "👑" },
-            { label: "Pay on Arrival", desc: "Nationwide Delivery", icon: "🤝" },
-            { label: "Swift Transit", desc: "Within 24-48 Hours", icon: "🚀" },
-            { label: "Master Cut", desc: "Tailored to Perfection", icon: "✂️" }
-          ].map((item, i) => (
-            <div key={i} className="space-y-4 hover:scale-105 transition-transform">
-              <div className="text-4xl mb-4">{item.icon}</div>
-              <h6 className="text-amber-500 font-serif font-bold text-lg">{item.label}</h6>
-              <p className="text-stone-400 text-[10px] uppercase tracking-[0.3em]">{item.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </div>

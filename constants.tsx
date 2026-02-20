@@ -4,74 +4,74 @@ import { Product, Testimonial } from './types';
 export const PRODUCTS: Product[] = [
   {
     id: 1,
-    name: "Classic Cream Silk Panjabi",
+    name: "ক্লাসিক ক্রিম সিল্ক পাঞ্জাবী",
     price: 3450,
     originalPrice: 4200,
-    category: "Eid Collection",
+    category: "ঈদ কালেকশন",
     image: "https://picsum.photos/seed/panjabi1/600/800",
-    badge: "Best Seller"
+    badge: "সেরা বিক্রয়"
   },
   {
     id: 2,
-    name: "Deep Emerald Embroidery",
+    name: "গাঢ় সবুজ কারুকাজ পাঞ্জাবী",
     price: 5200,
-    category: "Wedding Panjabi",
+    category: "বিয়ের পাঞ্জাবী",
     image: "https://picsum.photos/seed/panjabi2/600/800",
-    badge: "Premium"
+    badge: "প্রিমিয়াম"
   },
   {
     id: 3,
-    name: "Midnight Black Minimalist",
+    name: "মিডনাইট ব্ল্যাক মিনিমালিস্ট",
     price: 2800,
     originalPrice: 3200,
-    category: "Casual Panjabi",
+    category: "ক্যাজুয়াল পাঞ্জাবী",
     image: "https://picsum.photos/seed/panjabi3/600/800"
   },
   {
     id: 4,
-    name: "Royal Blue Sultan Cut",
+    name: "রয়্যাল ব্লু সুলতান কাট",
     price: 4800,
-    category: "New Arrival",
+    category: "নতুন কালেকশন",
     image: "https://picsum.photos/seed/panjabi4/600/800",
-    badge: "New"
+    badge: "নতুন"
   },
   {
     id: 5,
-    name: "Off-White Cotton Comfort",
+    name: "অফ-হোয়াইট কটন কমফোর্ট",
     price: 2200,
-    category: "Casual Panjabi",
+    category: "ক্যাজুয়াল পাঞ্জাবী",
     image: "https://picsum.photos/seed/panjabi5/600/800"
   },
   {
     id: 6,
-    name: "Golden Zardosi Wedding Set",
+    name: "গোল্ডেন জারদোসি ওয়েডিং সেট",
     price: 8500,
-    category: "Wedding Panjabi",
+    category: "বিয়ের পাঞ্জাবী",
     image: "https://picsum.photos/seed/panjabi6/600/800",
-    badge: "Exclusive"
+    badge: "এক্সক্লুসিভ"
   }
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
-    name: "Arifur Rahman",
+    name: "আরিফুর রহমান",
     rating: 5,
-    text: "The fabric quality is outstanding. Wore it for my sister's wedding and received so many compliments!",
-    date: "2 weeks ago"
+    text: "কাপড়ের মান অসাধারণ। আমার বোনের বিয়েতে এটি পরেছিলাম এবং সবাই খুব প্রশংসা করেছে!",
+    date: "২ সপ্তাহ আগে"
   },
   {
     id: 2,
-    name: "Salman Khan",
+    name: "সালমান খান",
     rating: 4,
-    text: "Great fitting and very comfortable for the humid weather in Dhaka. Delivery was fast too.",
-    date: "1 month ago"
+    text: "ফিটিং খুব ভালো এবং ঢাকার গরমে পরতে বেশ আরামদায়ক। ডেলিভারিও খুব দ্রুত ছিল।",
+    date: "১ মাস আগে"
   }
 ];
 
 export const CATEGORIES = [
-  { name: "Eid Collection", slug: "eid" },
-  { name: "Wedding Panjabi", slug: "wedding" },
-  { name: "Casual Panjabi", slug: "casual" },
-  { name: "New Arrival", slug: "new" }
+  { name: "ঈদ কালেকশন", slug: "eid" },
+  { name: "বিয়ের পাঞ্জাবী", slug: "wedding" },
+  { name: "ক্যাজুয়াল পাঞ্জাবী", slug: "casual" },
+  { name: "নতুন কালেকশন", slug: "new" }
 ];
