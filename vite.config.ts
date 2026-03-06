@@ -5,8 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
+    const isVercel = !!process.env.VERCEL;
+    const isGitHubPages = !!process.env.GITHUB_ACTIONS;
+    
     return {
-      base: '/gemini-panjami-website/',
+      base: isVercel ? '/' : (isGitHubPages ? '/gemini-panjami-website/' : '/'),
       server: {
         port: 3000,
         host: '0.0.0.0',
