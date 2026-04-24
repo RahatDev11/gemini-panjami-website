@@ -9,6 +9,10 @@ export const notificationService = {
    * Telegram এ নোটিফিকেশন পাঠায়
    */
   async sendTelegramNotification(order: Order) {
+    if (!BOT_TOKEN || !CHAT_ID) {
+      console.warn("Telegram BOT_TOKEN or CHAT_ID is missing. Skipping notification.");
+      return { success: false, error: "Missing configuration" };
+    }
     const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
     
     const productDetails = (order.items || []).map((item, index) => 

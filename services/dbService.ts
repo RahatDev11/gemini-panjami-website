@@ -11,6 +11,7 @@ export const dbService = {
   async fetchProducts(): Promise<Product[]> {
     try {
       const db = getFirebaseDb();
+      if (!db) return PRODUCTS;
       const productsRef = ref(db, "products");
       const snapshot = await get(productsRef);
       if (snapshot.exists()) {
@@ -31,6 +32,7 @@ export const dbService = {
   async fetchEvents(): Promise<EventBanner[]> {
     try {
       const db = getFirebaseDb();
+      if (!db) return EVENT_BANNERS;
       const eventsRef = ref(db, "events");
       const snapshot = await get(eventsRef);
       if (snapshot.exists()) {
@@ -50,6 +52,7 @@ export const dbService = {
   async placeOrder(orderData: Partial<Order>): Promise<Order> {
     try {
       const db = getFirebaseDb();
+      if (!db) throw new Error("Firebase database not initialized");
       const today = new Date();
       const year = today.getFullYear().toString().slice(-2);
       const day = String(today.getDate()).padStart(2, '0');
@@ -100,6 +103,7 @@ export const dbService = {
   async fetchOrderById(orderId: string): Promise<Order | null> {
     try {
       const db = getFirebaseDb();
+      if (!db) return null;
       const orderRef = ref(db, `orders/${orderId}`);
       const snapshot = await get(orderRef);
       if (snapshot.exists()) {
@@ -118,6 +122,7 @@ export const dbService = {
   async fetchUserOrders(userId: string): Promise<Order[]> {
     try {
         const db = getFirebaseDb();
+        if (!db) return [];
         const ordersRef = ref(db, "orders");
         const snapshot = await get(ordersRef);
         if (snapshot.exists()) {

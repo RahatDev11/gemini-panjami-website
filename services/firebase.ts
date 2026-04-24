@@ -17,14 +17,26 @@ const firebaseConfig = {
 
 export const getFirebaseApp = () => {
   if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-    throw new Error("Firebase API Key is missing. Please check your environment variables.");
+    console.warn("Firebase API Key is missing. Some features may not work.");
+    return null;
   }
   return getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 };
 
-export const getFirebaseAuth = () => getAuth(getFirebaseApp());
-export const getFirebaseDb = () => getDatabase(getFirebaseApp());
-export const getFirebaseFirestore = () => getFirestore(getFirebaseApp());
+export const getFirebaseAuth = () => {
+  const app = getFirebaseApp();
+  return app ? getAuth(app) : null as any;
+};
+
+export const getFirebaseDb = () => {
+  const app = getFirebaseApp();
+  return app ? getDatabase(app) : null as any;
+};
+
+export const getFirebaseFirestore = () => {
+  const app = getFirebaseApp();
+  return app ? getFirestore(app) : null as any;
+};
 export const googleProvider = new GoogleAuthProvider();
 
 // For backward compatibility where we can't easily refactor
