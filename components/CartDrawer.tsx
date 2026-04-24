@@ -1,16 +1,17 @@
 
 import React from 'react';
-import { Product } from '../types';
+import { CartItem, Product } from '../types';
 import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { cn } from '../lib/utils';
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  items: {product: Product, quantity: number}[];
+  items: CartItem[];
   total: number;
-  updateQuantity: (id: number, delta: number) => void;
-  removeItem: (id: number) => void;
+  updateQuantity: (id: string, delta: number) => void;
+  removeItem: (id: string) => void;
   onCheckout: () => void;
   onViewProduct: (product: Product) => void;
 }
@@ -26,116 +27,131 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 z-[60]" 
+            className="fixed inset-0 bg-black/60 backdrop-blur-[4px] z-[60]" 
             onClick={onClose} 
           />
           <motion.aside 
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 h-full w-full max-w-[480px] bg-white text-stone-900 z-[70] shadow-2xl border-l-4 border-emerald-900"
+            transition={{ type: 'spring', damping: 40, stiffness: 400 }}
+            className="fixed top-0 right-0 h-full w-full max-w-[450px] bg-white z-[70] shadow-2xl flex flex-col"
           >
-            <div className="flex flex-col h-full">
-              <div className="p-8 border-b border-stone-100 flex justify-between items-center bg-emerald-900 text-white shadow-md">
-                <div className="flex items-center space-x-3">
-                  <ShoppingBag className="h-6 w-6 text-amber-500" />
-                  <h2 className="text-2xl font-serif font-bold tracking-tight">শপিং ব্যাগ</h2>
+            {/* Header */}
+            <div className="p-6 md:p-8 flex justify-between items-center bg-white border-b border-lipstick/10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-lipstick/10 rounded-2xl flex items-center justify-center text-lipstick-dark">
+                    <ShoppingBag className="w-6 h-6" />
                 </div>
-                <button onClick={onClose} className="hover:bg-white/10 p-2 rounded-full transition">
-                  <X className="h-6 w-6" />
-                </button>
+                <div>
+                    <h2 className="text-xl font-black text-stone-900 leading-tight">শপিং ব্যাগ</h2>
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-lipstick-dark">{items.length}টি প্রোডাক্ট</p>
+                </div>
               </div>
+              <button 
+                onClick={onClose} 
+                className="hover:bg-lipstick/10 p-2 rounded-2xl transition-colors text-stone-400 hover:text-lipstick-dark"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-              <div className="flex-grow overflow-y-auto p-6 md:p-8 space-y-6 md:space-y-8 custom-scrollbar">
-                {items.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-stone-300 space-y-6">
-                    <ShoppingBag className="h-24 w-24 opacity-10" />
-                    <p className="font-bold uppercase text-[12px] tracking-widest text-stone-400">আপনার শপিং ব্যাগ খালি</p>
-                    <button 
-                      onClick={onClose} 
-                      className="text-emerald-900 font-bold border-b-2 border-amber-500 pb-1 uppercase tracking-widest text-[10px] flex items-center space-x-2"
-                    >
-                      <span>কেনাকাটা শুরু করুন</span>
-                      <ArrowRight className="h-3 w-3" />
-                    </button>
+            {/* List */}
+            <div className="flex-grow overflow-y-auto p-6 md:p-8 space-y-6 no-scrollbar bg-background-soft/30">
+              {items.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                  <div className="w-32 h-32 bg-lipstick/5 rounded-full flex items-center justify-center mb-6">
+                    <ShoppingBag className="w-16 h-16 text-lipstick/20" />
                   </div>
-                ) : (
-                  <div className="space-y-6">
-                    {items.map((item) => (
-                      <motion.div 
-                        layout
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        key={item.product.id} 
-                        onClick={() => onViewProduct(item.product)}
-                        className="flex space-x-4 md:space-x-6 p-4 -m-4 rounded-lg hover:bg-stone-50 transition-all cursor-pointer group border border-transparent hover:border-stone-100"
-                      >
-                        <div className="w-24 aspect-[3/4] bg-stone-100 overflow-hidden shrink-0 shadow-md">
-                          <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        </div>
-                        <div className="flex-grow flex flex-col justify-between py-1">
-                          <div className="space-y-1">
-                            <div className="flex justify-between items-start">
-                              <h3 className="font-serif font-bold text-stone-800 leading-tight group-hover:text-emerald-700 transition-colors">
-                                {item.product.name}
-                              </h3>
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); removeItem(item.product.id); }} 
-                                className="text-stone-300 hover:text-red-500 transition-colors p-1"
-                                title="সরিয়ে ফেলুন"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                            <p className="text-[10px] text-stone-400 uppercase tracking-widest">{item.product.category}</p>
-                          </div>
-                          
-                          <div className="flex justify-between items-end mt-4">
-                            <div className="flex items-center border-2 border-stone-200 rounded-md bg-white overflow-hidden shadow-sm">
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, -1); }} 
-                                className="px-3 py-1.5 hover:bg-emerald-50 text-emerald-900 transition-colors border-r border-stone-100"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </button>
-                              <span className="px-4 text-sm font-black text-stone-800">{item.quantity}</span>
-                              <button 
-                                onClick={(e) => { e.stopPropagation(); updateQuantity(item.product.id, 1); }} 
-                                className="px-3 py-1.5 hover:bg-emerald-50 text-emerald-900 transition-colors border-l border-stone-100"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </button>
-                            </div>
-                            <p className="font-bold text-emerald-950 text-xl tracking-tighter">৳{(item.product.price * item.quantity).toLocaleString()}</p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {items.length > 0 && (
-                <div className="p-8 border-t border-stone-100 bg-stone-50 shadow-inner">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="flex flex-col">
-                      <span className="text-stone-400 uppercase tracking-widest text-[10px] font-black">মোট মূল্য</span>
-                      <span className="text-xs text-emerald-600 font-bold">শিপিং চার্জ ছাড়া</span>
-                    </div>
-                    <span className="text-3xl font-serif font-bold text-emerald-950 tracking-tighter">৳{total.toLocaleString()}</span>
-                  </div>
+                  <h3 className="text-xl font-bold text-stone-800 mb-2">আপনার ব্যাগটি খালি!</h3>
+                  <p className="text-sm text-stone-400 mb-8 leading-relaxed">এখনই আপনার পছন্দের প্রোডাক্টগুলো ব্যাগে যোগ করুন।</p>
                   <button 
-                    onClick={onCheckout}
-                    className="w-full bg-emerald-900 text-white font-bold py-6 rounded-sm uppercase tracking-[0.4em] shadow-xl hover:bg-emerald-800 transition transform active:scale-[0.98] border-b-4 border-emerald-950 flex items-center justify-center space-x-3"
+                    onClick={onClose} 
+                    className="bg-lipstick-dark text-white px-8 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-lipstick/20 active:scale-95 flex items-center gap-2"
                   >
-                    <span>চেকআউট করুন</span>
-                    <ArrowRight className="h-5 w-5" />
+                    শপিং শুরু করুন
+                    <ArrowRight className="w-4 h-4" />
                   </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {items.map((item) => (
+                    <motion.div 
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      key={item.id} 
+                      className="group flex gap-4 bg-white p-4 rounded-[32px] shadow-sm border border-lipstick/5 hover:border-lipstick/20 transition-all hover:shadow-xl hover:shadow-lipstick/5 relative overflow-hidden"
+                    >
+                      <div 
+                        className="w-20 aspect-square overflow-hidden rounded-2xl shrink-0 bg-stone-50 cursor-pointer"
+                        onClick={() => onViewProduct(item as any)}
+                      >
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                      </div>
+                      
+                      <div className="flex-grow flex flex-col justify-between py-0.5">
+                        <div className="flex justify-between items-start gap-2">
+                          <h3 
+                            className="font-bold text-stone-800 text-sm leading-snug line-clamp-2 cursor-pointer hover:text-lipstick-dark transition-colors"
+                            onClick={() => onViewProduct(item as any)}
+                          >
+                            {item.name}
+                          </h3>
+                          <button 
+                            onClick={() => removeItem(item.id)} 
+                            className="text-stone-300 hover:text-red-500 transition-colors p-1"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        <div className="flex justify-between items-end">
+                          <div className="flex items-center bg-background-soft rounded-xl p-1 border border-lipstick/5 shadow-inner">
+                            <button 
+                              onClick={() => updateQuantity(item.id, -1)} 
+                              className="p-1 px-2 hover:bg-white rounded-lg transition-colors text-lipstick-dark disabled:opacity-30"
+                              disabled={item.quantity <= 1}
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="w-8 text-center text-xs font-black text-stone-800">{item.quantity}</span>
+                            <button 
+                              onClick={() => updateQuantity(item.id, 1)} 
+                              className="p-1 px-2 hover:bg-white rounded-lg transition-colors text-lipstick-dark"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <p className="font-black text-lipstick-dark text-lg">৳{(item.price * item.quantity).toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               )}
             </div>
+
+            {/* Footer */}
+            {items.length > 0 && (
+              <div className="p-8 border-t border-lipstick/10 bg-white shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)] rounded-t-[40px]">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <span className="text-stone-400 uppercase tracking-widest text-[10px] font-black">সর্বমোট মূল্য</span>
+                    <p className="text-[10px] text-lipstick-dark font-bold leading-none mt-1">শিপিং ছাড়া</p>
+                  </div>
+                  <span className="text-3xl font-black text-stone-900 tabular-nums">৳{total.toLocaleString()}</span>
+                </div>
+                <button 
+                  onClick={onCheckout}
+                  className="w-full bg-lipstick-dark text-white font-black py-5 rounded-2xl uppercase tracking-widest text-sm shadow-xl shadow-lipstick/10 hover:bg-black transition-all transform active:scale-95 flex items-center justify-center gap-3"
+                >
+                  চেকআউট করুন
+                  <ArrowRight className="w-5 h-5 animate-pulse" />
+                </button>
+              </div>
+            )}
           </motion.aside>
         </>
       )}

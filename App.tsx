@@ -14,8 +14,10 @@ import OrderStatus from './views/OrderStatus';
 import Returns from './views/Returns';
 import SizeGuide from './views/SizeGuide';
 import QualityAssurance from './views/QualityAssurance';
-import { Product } from './types';
+import { Product, CartItem } from './types';
 import { dbService } from './services/dbService';
+import { auth, googleProvider } from './services/firebase';
+import { onAuthStateChanged, signInWithPopup, signOut, User as FirebaseUser } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 
 export type View = 'home' | 'shop' | 'about' | 'contact' | 'checkout' | 'product-details' | 'order-status' | 'returns' | 'size-guide' | 'quality';
@@ -23,12 +25,20 @@ export type View = 'home' | 'shop' | 'about' | 'contact' | 'checkout' | 'product
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [cartItems, setCartItems] = useState<{product: Product, quantity: number}[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showAI, setShowAI] = useState(false);
   
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -40,31 +50,53 @@ const App: React.FC = () => {
     loadData();
   }, []);
 
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   useEffect(() => {
     const titles: Record<View, string> = {
-      home: 'পাঞ্জাবী হাউজ - প্রিমিয়াম ঐতিহ্যবাহী পোশাক',
-      shop: 'সংগ্রহশালা - পাঞ্জাবী হাউজ',
-      about: 'আমাদের ঐতিহ্য - পাঞ্জাবী হাউজ',
-      contact: 'যোগাযোগ করুন - পাঞ্জাবী হাউজ',
-      checkout: 'চেকআউট - পাঞ্জাবী হাউজ',
-      'product-details': selectedProduct ? `${selectedProduct.name} - পাঞ্জাবী হাউজ` : 'পণ্যের বিবরণ',
-      'order-status': 'অর্ডার ট্র্যাকিং - পাঞ্জাবী হাউজ',
-      'returns': 'রিটার্ন ও এক্সচেঞ্জ - পাঞ্জাবী হাউজ',
-      'size-guide': 'সাইজ চার্ট - পাঞ্জাবী হাউজ',
-      'quality': 'মান নিয়ন্ত্রণ - পাঞ্জাবী হাউজ'
+      home: 'Any\'s Beauty Corner - আপনার সৌন্দর্য চর্চার বিশ্বস্ত সঙ্গী',
+      shop: 'সংগ্রহশালা - Any\'s Beauty Corner',
+      about: 'আমাদের সম্পর্কে - Any\'s Beauty Corner',
+      contact: 'যোগাযোগ করুন - Any\'s Beauty Corner',
+      checkout: 'চেকআউট - Any\'s Beauty Corner',
+      'product-details': selectedProduct ? `${selectedProduct.name} - Any's Beauty Corner` : 'পণ্যের বিবরণ',
+      'order-status': 'অর্ডার ট্র্যাকিং - Any\'s Beauty Corner',
+      'returns': 'রিটার্ন ও এক্সচেঞ্জ - Any\'s Beauty Corner',
+      'size-guide': 'সাইজ চার্ট - Any\'s Beauty Corner',
+      'quality': 'মান নিয়ন্ত্রণ - Any\'s Beauty Corner'
     };
     document.title = titles[currentView];
   }, [currentView, selectedProduct]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantity: number = 1) => {
     setCartItems(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
+      const existing = prev.find(item => item.id === product.id);
       if (existing) {
         return prev.map(item => 
-          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { 
+        id: product.id, 
+        name: product.name, 
+        price: product.price, 
+        image: product.image.split(',')[0], 
+        quantity 
+      }];
     });
   };
 
@@ -74,11 +106,7 @@ const App: React.FC = () => {
   };
 
   const handleBuyNow = (product: Product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
-      if (existing) return prev;
-      return [...prev, { product, quantity: 1 }];
-    });
+    addToCart(product);
     navigateTo('checkout');
   };
 
@@ -88,13 +116,16 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const removeFromCart = (id: number) => {
-    setCartItems(prev => prev.filter(item => item.product.id !== id));
+  // Expose for Navbar search
+  (window as any).navigateToProduct = navigateToProduct;
+
+  const removeFromCart = (id: string) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const updateQuantity = (id: number, delta: number) => {
+  const updateQuantity = (id: string, delta: number) => {
     setCartItems(prev => prev.map(item => {
-      if (item.product.id === id) {
+      if (item.id === id) {
         const newQty = Math.max(1, item.quantity + delta);
         return { ...item, quantity: newQty };
       }
@@ -103,7 +134,7 @@ const App: React.FC = () => {
   };
 
   const cartTotal = useMemo(() => 
-    cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0)
+    cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0)
   , [cartItems]);
 
   const cartCount = useMemo(() => 
@@ -117,19 +148,19 @@ const App: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-stone-50">
-        <div className="flex flex-col items-center space-y-4">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full"
-          ></motion.div>
+      <div id="global-loading-spinner">
+        <div className="flex flex-col items-center space-y-6">
+          <div className="spinner-dots">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
           <motion.p 
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="font-serif italic text-emerald-900 text-lg"
+            className="font-medium text-lipstick-dark text-lg"
           >
-            সংগ্রহ লোড হচ্ছে...
+            লোড হচ্ছে...
           </motion.p>
         </div>
       </div>
@@ -137,12 +168,16 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50 selection:bg-amber-100 selection:text-emerald-950 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background-soft selection:bg-lipstick/30 selection:text-lipstick-dark overflow-x-hidden pt-16 md:pt-20">
       <Navbar 
         currentView={currentView} 
         navigateTo={navigateTo} 
         cartCount={cartCount} 
-        onOpenCart={() => setIsCartOpen(true)} 
+        onOpenCart={() => setIsCartOpen(true)}
+        products={products}
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
       />
 
       <main className="flex-grow relative">
@@ -175,8 +210,8 @@ const App: React.FC = () => {
               <ProductDetails 
                 product={selectedProduct}
                 products={products}
-                onAddToCart={handleAddToCart}
-                onBuyNow={handleBuyNow}
+                onAddToCart={(p, q) => { addToCart(p, q); setIsCartOpen(true); }}
+                onBuyNow={(p, q) => { addToCart(p, q); navigateTo('checkout'); }}
                 onViewProduct={navigateToProduct}
                 onBack={() => navigateTo('shop')}
               />
@@ -187,11 +222,12 @@ const App: React.FC = () => {
               <Checkout 
                 cartItems={cartItems} 
                 cartTotal={cartTotal} 
-                onSuccess={() => setCartItems([])}
+                user={user}
+                onSuccess={() => { setCartItems([]); navigateTo('home'); }}
                 onBackToShop={() => navigateTo('shop')}
               />
             )}
-            {currentView === 'order-status' && <OrderStatus />}
+            {currentView === 'order-status' && <OrderStatus user={user} />}
             {currentView === 'returns' && <Returns />}
             {currentView === 'size-guide' && <SizeGuide />}
             {currentView === 'quality' && <QualityAssurance />}

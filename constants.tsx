@@ -1,9 +1,9 @@
 
-import { Product, Testimonial } from './types';
+import { Product, Testimonial, EventBanner } from './types';
 
 export const PRODUCTS: Product[] = [
   {
-    id: 1,
+    id: "1",
     name: "ক্লাসিক ক্রিম সিল্ক পাঞ্জাবী",
     price: 3450,
     originalPrice: 4200,
@@ -12,7 +12,7 @@ export const PRODUCTS: Product[] = [
     badge: "সেরা বিক্রয়"
   },
   {
-    id: 2,
+    id: "2",
     name: "গাঢ় সবুজ কারুকাজ পাঞ্জাবী",
     price: 5200,
     category: "বিয়ের পাঞ্জাবী",
@@ -20,7 +20,7 @@ export const PRODUCTS: Product[] = [
     badge: "প্রিমিয়াম"
   },
   {
-    id: 3,
+    id: "3",
     name: "মিডনাইট ব্ল্যাক মিনিমালিস্ট",
     price: 2800,
     originalPrice: 3200,
@@ -28,7 +28,7 @@ export const PRODUCTS: Product[] = [
     image: "https://picsum.photos/seed/panjabi3/600/800"
   },
   {
-    id: 4,
+    id: "4",
     name: "রয়্যাল ব্লু সুলতান কাট",
     price: 4800,
     category: "নতুন কালেকশন",
@@ -36,19 +36,38 @@ export const PRODUCTS: Product[] = [
     badge: "নতুন"
   },
   {
-    id: 5,
+    id: "5",
     name: "অফ-হোয়াইট কটন কমফোর্ট",
     price: 2200,
     category: "ক্যাজুয়াল পাঞ্জাবী",
     image: "https://picsum.photos/seed/panjabi5/600/800"
   },
   {
-    id: 6,
+    id: "6",
     name: "গোল্ডেন জারদোসি ওয়েডিং সেট",
     price: 8500,
     category: "বিয়ের পাঞ্জাবী",
     image: "https://picsum.photos/seed/panjabi6/600/800",
     badge: "এক্সক্লুসিভ"
+  }
+];
+
+export const EVENT_BANNERS: EventBanner[] = [
+  {
+    id: "e1",
+    title: "ঈদ ধামাকা অফার",
+    description: "সব মেকআপ কিটে ২০% পর্যন্ত ছাড়!",
+    image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=2087&auto=format&fit=crop",
+    link: "ঈদ কালেকশন",
+    bgColor: "bg-lipstick"
+  },
+  {
+    id: "e2",
+    title: "ব্রাইডাল স্পেশাল",
+    description: "আপনার বিশেষ দিনের জন্য বিশেষ কালেকশন",
+    image: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=2070&auto=format&fit=crop",
+    link: "বিয়ের পাঞ্জাবী",
+    bgColor: "bg-black"
   }
 ];
 

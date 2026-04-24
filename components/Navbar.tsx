@@ -1,98 +1,243 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from '../App';
-import { ShoppingBag, Menu, X, Phone, MapPin, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Menu, X, Search, User, ChevronDown, LogOut, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Product } from '../types';
+import { cn } from '../lib/utils';
+import { User as FirebaseUser } from 'firebase/auth';
 
 interface NavbarProps {
   currentView: View;
   navigateTo: (view: View) => void;
   cartCount: number;
   onOpenCart: () => void;
+  products: Product[];
+  user: FirebaseUser | null;
+  onLogin: () => void;
+  onLogout: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ currentView, navigateTo, cartCount, onOpenCart }) => {
+const Navbar: React.FC<NavbarProps> = ({ 
+  currentView, 
+  navigateTo, 
+  cartCount, 
+  onOpenCart, 
+  products,
+  user,
+  onLogin,
+  onLogout
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  const navLinks: { label: string; view: View }[] = [
-    { label: 'হোম', view: 'home' },
-    { label: 'শপ', view: 'shop' },
-    { label: 'ঐতিহ্য', view: 'about' },
-    { label: 'যোগাযোগ', view: 'contact' },
-  ];
+  const filteredProducts = searchQuery.trim() 
+    ? products.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        p.tags?.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5)
+    : [];
 
   const handleNav = (view: View) => {
     navigateTo(view);
     setIsMobileMenuOpen(false);
+    setIsSearchOpen(false);
+    setSearchQuery('');
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-emerald-900/95 backdrop-blur-md text-stone-50 shadow-xl border-b border-amber-500/20">
-      <nav className="max-w-7xl mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
-        {/* Brand */}
-        <motion.div 
-          whileHover={{ scale: 1.02 }}
-          className="flex items-center space-x-3 cursor-pointer group" 
+    <header className="fixed top-0 left-0 w-full z-50 bg-lipstick text-white shadow-md">
+      <div className="max-w-7xl mx-auto px-4 h-16 md:h-20 flex items-center justify-between gap-4">
+        {/* Logo */}
+        <div 
+          className="flex items-center space-x-2 cursor-pointer shrink-0" 
           onClick={() => handleNav('home')}
         >
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-500 rounded-full flex items-center justify-center font-serif text-2xl md:text-3xl font-bold text-emerald-950 group-hover:rotate-6 transition-all duration-500 shadow-lg shrink-0">
-            প
-          </div>
-          <div className="flex items-baseline space-x-1.5 md:space-x-2">
-            <h1 className="text-lg md:text-2xl font-serif font-bold tracking-tighter text-white leading-none">পাঞ্জাবী</h1>
-            <p className="text-xs md:text-base tracking-widest uppercase text-amber-500 font-black leading-none">হাউজ</p>
-          </div>
-        </motion.div>
-
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex space-x-12 text-[13px] font-bold">
-          {navLinks.map((link) => (
-            <button 
-              key={link.view}
-              onClick={() => handleNav(link.view)}
-              className={`hover:text-amber-400 transition-all relative py-1 uppercase tracking-widest ${
-                currentView === link.view ? 'text-amber-400' : 'text-stone-100'
-              }`}
-            >
-              {link.label}
-              {currentView === link.view && (
-                <motion.span 
-                  layoutId="navUnderline"
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-amber-400"
-                />
-              )}
-            </button>
-          ))}
+          <img 
+            src="https://picsum.photos/seed/anybeauty/100/100" 
+            alt="Logo" 
+            className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+            referrerPolicy="no-referrer"
+          />
+          <span className="text-lg md:text-xl font-bold whitespace-nowrap">Any's Beauty Corner</span>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center space-x-2 md:space-x-6">
-          <button 
-            className="relative p-2 hover:text-amber-400 transition transform hover:scale-110" 
-            onClick={onOpenCart}
-            aria-label="Open Cart"
-          >
-            <ShoppingBag className="h-6 w-6 md:h-7 md:w-7" strokeWidth={1.5} />
-            {cartCount > 0 && (
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 bg-amber-500 text-emerald-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg border border-emerald-900"
+        {/* Desktop Search */}
+        <div className="hidden md:block flex-grow max-w-md relative">
+          <div className="relative">
+            <input 
+              type="text"
+              placeholder="প্রোডাক্ট সার্চ করুন..."
+              className="w-full bg-white/30 backdrop-blur-md border-0 rounded-full py-2 px-10 text-white placeholder:text-white/70 focus:ring-2 focus:ring-lipstick-dark outline-none transition-all"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70" />
+          </div>
+          <AnimatePresence>
+            {filteredProducts.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-full left-0 w-full bg-white rounded-xl shadow-xl mt-2 text-stone-800 overflow-hidden"
               >
+                {filteredProducts.map(p => (
+                  <div 
+                    key={p.id}
+                    className="p-3 flex items-center gap-3 hover:bg-stone-50 cursor-pointer border-b last:border-0"
+                    onClick={() => {
+                      navigateTo('product-details'); // In App.tsx I need to handle selection
+                      // For now just redirecting to detail logic
+                      (window as any).navigateToProduct?.(p);
+                      setSearchQuery('');
+                    }}
+                  >
+                    <img src={p.image.split(',')[0]} className="w-10 h-10 object-cover rounded" alt={p.name} />
+                    <div className="flex-grow">
+                      <p className="text-sm font-semibold truncate">{p.name}</p>
+                      <p className="text-xs text-lipstick-dark font-bold">{p.price}৳</p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Right Actions */}
+        <div className="flex items-center space-x-2 md:space-x-4">
+          <button 
+            className="md:hidden p-2 hover:bg-white/20 rounded-full transition"
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+          >
+            <Search className="w-6 h-6" />
+          </button>
+
+          {/* Cart */}
+          <button 
+            className="relative p-2 hover:bg-white/20 rounded-full transition group"
+            onClick={onOpenCart}
+          >
+            <ShoppingBag className="w-6 h-6" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-lipstick-dark text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-lipstick group-hover:scale-110 transition-transform">
                 {cartCount}
-              </motion.span>
+              </span>
             )}
           </button>
-          
+
+          {/* User / Login */}
+          <div className="hidden md:block relative">
+            {user ? (
+              <div 
+                className="flex items-center space-x-2 cursor-pointer p-1 pr-3 hover:bg-white/20 rounded-full transition"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              >
+                <img src={user.photoURL || ''} className="w-8 h-8 rounded-full border-2 border-white" alt="User" />
+                <span className="text-sm font-semibold max-w-[100px] truncate">{user.displayName}</span>
+                <ChevronDown className={cn("w-4 h-4 transition-transform", isUserMenuOpen && "rotate-180")} />
+              </div>
+            ) : (
+              <button 
+                onClick={onLogin}
+                className="flex items-center space-x-2 py-2 px-4 hover:bg-white/20 rounded-full transition font-semibold"
+              >
+                <User className="w-5 h-5" />
+                <span>লগইন</span>
+              </button>
+            )}
+
+            <AnimatePresence>
+              {isUserMenuOpen && user && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl py-2 text-stone-800"
+                >
+                  <button 
+                    onClick={() => { handleNav('order-status'); setIsUserMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-stone-50 flex items-center space-x-2"
+                  >
+                    <ShoppingBag className="w-4 h-4" />
+                    <span>আমার অর্ডারসমূহ</span>
+                  </button>
+                  <button 
+                    onClick={() => { handleNav('home'); setIsUserMenuOpen(false); }} // Link to Notify page if created
+                    className="w-full text-left px-4 py-2 hover:bg-stone-50 flex items-center space-x-2"
+                  >
+                    <Bell className="w-4 h-4" />
+                    <span>নোটিফিকেশন</span>
+                  </button>
+                  <hr className="my-2 border-stone-100" />
+                  <button 
+                    onClick={() => { onLogout(); setIsUserMenuOpen(false); }}
+                    className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center space-x-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>লগআউট</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button 
-            className="lg:hidden p-2 text-amber-500 hover:bg-white/10 rounded-full transition" 
+            className="lg:hidden p-2 hover:bg-white/20 rounded-full transition"
             onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Open Menu"
           >
-            <Menu className="h-7 w-7" />
+            <Menu className="w-7 h-7" />
           </button>
         </div>
-      </nav>
+      </div>
+
+      {/* Mobile Search Bar */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="md:hidden bg-white px-4 py-2 overflow-hidden"
+          >
+            <div className="relative">
+              <input 
+                type="text"
+                placeholder="প্রোডাক্ট সার্চ করুন..."
+                className="w-full bg-stone-100 border-0 rounded-full py-2 px-10 text-stone-800 focus:ring-2 focus:ring-lipstick-dark outline-none"
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            </div>
+            {filteredProducts.length > 0 && (
+              <div className="mt-2 text-stone-800">
+                {filteredProducts.map(p => (
+                  <div 
+                    key={p.id}
+                    className="p-3 flex items-center gap-3 hover:bg-stone-50 cursor-pointer border-b last:border-0"
+                    onClick={() => {
+                        (window as any).navigateToProduct?.(p);
+                      setIsSearchOpen(false);
+                      setSearchQuery('');
+                    }}
+                  >
+                    <img src={p.image.split(',')[0]} className="w-8 h-8 object-cover rounded" alt={p.name} />
+                    <div className="flex-grow">
+                      <p className="text-xs font-semibold truncate">{p.name}</p>
+                      <p className="text-[10px] text-lipstick-dark font-bold">{p.price}৳</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Menu Sidebar */}
       <AnimatePresence>
@@ -102,64 +247,75 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, navigateTo, cartCount, onO
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/80"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             
             <motion.aside 
-              initial={{ x: '100%' }}
+              initial={{ x: '-100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 right-0 h-screen w-full max-w-[320px] bg-emerald-900 shadow-2xl flex flex-col overflow-hidden border-l-2 border-amber-500/30"
+              className="fixed inset-y-0 left-0 h-screen w-full max-w-[280px] bg-white shadow-2xl flex flex-col overflow-hidden"
             >
-              <div className="p-6 flex justify-between items-center border-b border-white/5 bg-emerald-950 shrink-0">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center font-serif text-xl font-bold text-emerald-950 shadow-lg">
-                    প
-                  </div>
-                  <div className="flex items-baseline space-x-1.5">
-                    <span className="font-serif font-bold text-lg text-white leading-none">পাঞ্জাবী</span>
-                    <span className="text-xs tracking-widest uppercase text-amber-500 font-black leading-none">হাউজ</span>
-                  </div>
+              <div className="p-6 flex justify-between items-center bg-lipstick text-white shrink-0">
+                <div className="flex items-center space-x-3">
+                  <img src="https://picsum.photos/seed/anybeauty/100/100" className="w-8 h-8 rounded-full border-2 border-white" alt="Logo" />
+                  <span className="font-bold text-lg">Any's Beauty</span>
                 </div>
-                <button 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-amber-500 hover:bg-white/5 p-2 rounded-full transition"
-                >
+                <button onClick={() => setIsMobileMenuOpen(false)}>
                   <X className="h-6 w-6" />
                 </button>
               </div>
 
-              <div className="flex-grow py-6 flex flex-col px-4 space-y-2 overflow-y-auto bg-emerald-900">
-                {navLinks.map((link) => (
+              <div className="flex-grow py-4 flex flex-col overflow-y-auto">
+                {user ? (
+                   <div className="px-6 py-4 flex items-center space-x-3 border-b mb-2">
+                     <img src={user.photoURL || ''} className="w-12 h-12 rounded-full border-2 border-lipstick" alt="User" />
+                     <div>
+                       <p className="font-bold text-stone-800">{user.displayName}</p>
+                       <p className="text-xs text-stone-500">{user.email}</p>
+                     </div>
+                   </div>
+                ) : (
+                  <button 
+                    onClick={onLogin}
+                    className="mx-6 my-4 py-3 bg-lipstick text-white rounded-lg font-bold flex items-center justify-center space-x-2"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>লগইন করুন</span>
+                  </button>
+                )}
+
+                {[
+                  { label: 'হোম', view: 'home', icon: '🏠' },
+                  { label: 'শপ', view: 'shop', icon: '🛍️' },
+                  { label: 'অর্ডার ট্র্যাকিং', view: 'order-status', icon: '📦' },
+                  { label: 'আমাদের সম্পর্কে', view: 'about', icon: '✨' },
+                  { label: 'যোগাযোগ', view: 'contact', icon: '📞' },
+                ].map((link) => (
                   <button 
                     key={link.view} 
-                    onClick={() => handleNav(link.view)}
-                    className={`w-full text-left py-4 px-6 text-[15px] font-bold transition-all rounded-sm flex items-center justify-between group uppercase tracking-widest ${
-                      currentView === link.view 
-                        ? 'text-amber-400 bg-emerald-950 border-r-4 border-amber-500' 
-                        : 'text-stone-300 hover:text-white'
-                    }`}
+                    onClick={() => handleNav(link.view as View)}
+                    className={cn(
+                      "w-full text-left py-3 px-6 text-sm font-semibold transition-all flex items-center space-x-3",
+                      currentView === link.view ? "text-lipstick bg-lipstick/5" : "text-stone-600 hover:bg-stone-50"
+                    )}
                   >
+                    <span>{link.icon}</span>
                     <span>{link.label}</span>
-                    <ChevronRight className={`h-4 w-4 text-amber-500 transition-opacity ${currentView === link.view ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
                   </button>
                 ))}
-              </div>
 
-              <div className="p-8 border-t border-white/5 bg-emerald-950 shrink-0">
-                <p className="text-[10px] uppercase tracking-widest text-amber-500 font-bold mb-4">আমাদের সাথে যুক্ত থাকুন</p>
-                <div className="space-y-3">
-                   <div className="flex items-center space-x-3">
-                     <Phone className="h-4 w-4 text-amber-500" />
-                     <p className="text-[12px] text-stone-100 font-bold">+৮৮০ ১৭১২ ৩৪৫৬৭৮</p>
-                   </div>
-                   <div className="flex items-start space-x-3">
-                     <MapPin className="h-4 w-4 text-amber-500 mt-0.5" />
-                     <p className="text-[11px] text-stone-300 leading-relaxed">বনানী রোড ১১, ব্লক এফ, ঢাকা</p>
-                   </div>
-                </div>
+                {user && (
+                    <button 
+                        onClick={onLogout}
+                        className="mt-auto mx-6 my-6 py-3 border-2 border-red-100 text-red-600 rounded-lg font-bold flex items-center justify-center space-x-2"
+                    >
+                        <LogOut className="w-5 h-5" />
+                        <span>লগআউট</span>
+                    </button>
+                )}
               </div>
             </motion.aside>
           </div>

@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getStyleAdvice } from '../services/geminiService';
 import { ChatMessage } from '../types';
-import { Send, MessageSquare, X, Sparkles } from 'lucide-react';
+import { Send, MessageSquare, X, Sparkles, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { cn } from '../lib/utils';
 
 interface AIScreenProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ const AIScreen: React.FC<AIScreenProps> = ({ isOpen, onToggle }) => {
     if (isOpen && chatHistory.length === 0) {
       setChatHistory([{ 
         role: 'model', 
-        text: 'আসসালামু আলাইকুম! আমি পাঞ্জাবী হাউজের স্টাইল কনসালট্যান্ট। ঈদ, বিয়ে বা ক্যাজুয়াল ব্যবহারের জন্য সেরা পাঞ্জাবী খুঁজে পেতে আমি আপনাকে সাহায্য করতে পারি। আপনি কোন অনুষ্ঠানের জন্য পোশাক খুঁজছেন?' 
+        text: 'আসসালামু আলাইকুম! আমি Any\'s Beauty Corner-এর এআই বিউটি কনসালট্যান্ট। আপনার স্কিন কেয়ার বা মেকআপ নিয়ে যেকোনো প্রশ্ন থাকলে আমাকে করতে পারেন। আমি আপনাকে সঠিক প্রোডাক্ট খুঁজে পেতে সাহায্য করব।' 
       }]);
     }
     scrollToBottom();
@@ -51,62 +52,79 @@ const AIScreen: React.FC<AIScreenProps> = ({ isOpen, onToggle }) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            initial={{ opacity: 0, y: 50, scale: 0.9, transformOrigin: 'bottom right' }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-28 right-8 w-[400px] max-w-[90vw] bg-white rounded-lg shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] border border-stone-100 z-[100] overflow-hidden flex flex-col h-[600px]"
+            className="fixed bottom-28 right-4 md:right-8 w-[420px] max-w-[95vw] bg-white rounded-[32px] shadow-2xl border border-lipstick/10 z-[100] overflow-hidden flex flex-col h-[600px]"
           >
-            <div className="bg-emerald-900 text-white p-6 flex justify-between items-center shadow-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-emerald-900 font-black text-lg">প</div>
+            <div className="bg-lipstick-dark text-white p-6 flex justify-between items-center shadow-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Sparkles className="w-20 h-20 rotate-12" />
+                </div>
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-lipstick-dark font-black text-xl shadow-inner italic">A</div>
                 <div>
-                  <p className="font-serif font-bold text-lg leading-none">স্টাইল কনসালট্যান্ট</p>
-                  <div className="flex items-center space-x-1 mt-1">
-                    <Sparkles className="h-2 w-2 text-amber-500" />
-                    <p className="text-[9px] uppercase tracking-widest opacity-60">এআই প্রযুক্তি চালিত</p>
+                  <p className="font-black text-lg leading-none">বিউটি কনসালট্যান্ট</p>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+                    <p className="text-[9px] uppercase tracking-widest opacity-80 font-bold">এআই অনলাইন</p>
                   </div>
                 </div>
               </div>
+              <button 
+                onClick={onToggle}
+                className="relative z-10 w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+              >
+                  <X className="w-5 h-5" />
+              </button>
             </div>
             
-            <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-stone-50/50 custom-scrollbar">
+            <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-background-soft/30 no-scrollbar">
               {chatHistory.map((msg, idx) => (
                 <motion.div 
                   initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   key={idx} 
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex items-end gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                 >
-                  <div className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed shadow-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-emerald-900 text-white rounded-br-none' 
-                      : 'bg-white text-stone-800 rounded-bl-none border border-stone-100'
-                  }`}>
+                  <div className={cn(
+                      "w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black shrink-0 shadow-sm",
+                      msg.role === 'user' ? "bg-lipstick-dark text-white" : "bg-white text-lipstick-dark border border-lipstick/10"
+                  )}>
+                      {msg.role === 'user' ? <User className="w-4 h-4" /> : "AI"}
+                  </div>
+                  <div className={cn(
+                      "max-w-[75%] rounded-2xl px-5 py-4 text-xs md:text-sm leading-relaxed shadow-sm font-bold",
+                      msg.role === 'user' 
+                        ? 'bg-lipstick-dark text-white rounded-br-none' 
+                        : 'bg-white text-stone-800 rounded-bl-none border border-lipstick/10'
+                  )}>
                     {msg.text}
                   </div>
                 </motion.div>
               ))}
               {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-white border border-stone-100 rounded-2xl px-5 py-3 flex space-x-2">
-                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }} className="w-2 h-2 bg-amber-500 rounded-full"></motion.div>
-                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-2 h-2 bg-amber-500 rounded-full"></motion.div>
-                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-2 h-2 bg-amber-500 rounded-full"></motion.div>
+                <div className="flex items-end gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-white text-lipstick-dark border border-lipstick/10 flex items-center justify-center text-[10px] font-black shadow-sm">AI</div>
+                  <div className="bg-white border border-lipstick/10 rounded-2xl px-5 py-4 flex gap-1.5 shadow-sm">
+                    <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-lipstick-dark rounded-full"></motion.div>
+                    <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-lipstick-dark rounded-full"></motion.div>
+                    <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-lipstick-dark rounded-full"></motion.div>
                   </div>
                 </div>
               )}
               <div ref={chatEndRef} />
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 bg-white border-t border-stone-100 flex items-center space-x-3">
+            <form onSubmit={handleSubmit} className="p-6 bg-white border-t border-lipstick/10 flex items-center gap-3">
               <input 
                 type="text" 
                 value={userInput}
                 onChange={e => setUserInput(e.target.value)}
-                placeholder="যেমন: বিয়ের জন্য কোন রঙটি ভালো হবে?" 
-                className="flex-grow bg-stone-50 border border-stone-200 rounded-full px-6 py-3 text-sm focus:outline-none focus:border-emerald-900 transition-colors"
+                placeholder="স্কিন কেয়ার নিয়ে প্রশ্ন করুন..." 
+                className="flex-grow bg-stone-50 border-2 border-stone-100 rounded-2xl px-6 py-4 text-xs md:text-sm font-bold focus:outline-none focus:border-lipstick-dark focus:bg-white transition-all shadow-inner"
               />
-              <button type="submit" className="bg-emerald-900 text-white p-3 rounded-full hover:bg-emerald-800 transition shadow-lg transform active:scale-95">
+              <button type="submit" className="bg-lipstick-dark text-white p-4 rounded-2xl hover:bg-black transition-all shadow-lg active:scale-90 shrink-0">
                 <Send className="h-5 w-5" />
               </button>
             </form>
@@ -116,20 +134,21 @@ const AIScreen: React.FC<AIScreenProps> = ({ isOpen, onToggle }) => {
 
       {/* Toggle Button */}
       <motion.button 
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         onClick={onToggle}
-        className={`fixed bottom-8 right-8 p-5 rounded-full shadow-2xl transition-all duration-300 z-[110] flex items-center justify-center group ${
-          isOpen ? 'bg-stone-100 text-emerald-900 hover:bg-stone-200' : 'bg-amber-500 text-emerald-950'
-        }`}
+        className={cn(
+            "fixed bottom-6 right-6 md:bottom-8 md:right-8 p-4 md:p-5 rounded-[24px] shadow-2xl transition-all duration-300 z-[110] flex items-center justify-center group",
+            isOpen ? 'bg-white text-lipstick-dark ring-4 ring-lipstick/10' : 'bg-lipstick-dark text-white'
+        )}
       >
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3">
           {isOpen ? (
-            <X className="h-7 w-7" />
+            <X className="w-7 h-7" />
           ) : (
             <>
-              <MessageSquare className="h-7 w-7" />
-              <span className="hidden md:block font-black uppercase text-[11px] tracking-widest">স্টাইল এআই</span>
+              <MessageSquare className="w-7 h-7" />
+              <span className="hidden md:block font-black uppercase text-[10px] tracking-[0.2em]">এআই হেল্প</span>
             </>
           )}
         </div>

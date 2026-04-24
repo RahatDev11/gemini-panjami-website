@@ -3,13 +3,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Product } from '../types';
 import ProductCard from '../components/ProductCard';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, ShoppingBag, Zap, Ruler, ShieldCheck, Star } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Zap, Ruler, ShieldCheck, Heart, Share2, Plus, Minus, Star } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 interface ProductDetailsProps {
   product: Product;
   products: Product[];
-  onAddToCart: (product: Product) => void;
-  onBuyNow: (product: Product) => void;
+  onAddToCart: (product: Product, quantity: number) => void;
+  onBuyNow: (product: Product, quantity: number) => void;
   onViewProduct: (product: Product) => void;
   onBack: () => void;
 }
@@ -17,46 +18,45 @@ interface ProductDetailsProps {
 const ProductDetails: React.FC<ProductDetailsProps> = ({ 
   product, products, onAddToCart, onBuyNow, onViewProduct, onBack 
 }) => {
-  const [selectedSize, setSelectedSize] = useState<string>('M');
-  const [mainImage, setMainImage] = useState<string>(product.image);
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  const images = product.image ? product.image.split(',').map(s => s.trim()) : ['https://via.placeholder.com/600x900'];
+  const [mainImage, setMainImage] = useState<string>(images[0]);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>('Standard');
+  const sizes = ['Mini', 'Standard', 'Combo'];
 
   useEffect(() => {
-    setMainImage(product.image);
+    setMainImage(images[0]);
+    setQuantity(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [product]);
-
-  const galleryImages = [
-    product.image,
-    `https://picsum.photos/seed/${product.id + 101}/600/900`,
-    `https://picsum.photos/seed/${product.id + 102}/600/900`,
-    `https://picsum.photos/seed/${product.id + 103}/600/900`,
-  ];
 
   const relatedProducts = useMemo(() => {
     return products
       .filter(p => p.category === product.category && p.id !== product.id)
-      .slice(0, 3);
+      .slice(0, 4);
   }, [product, products]);
 
+  const isOutOfStock = product.stockStatus === 'out_of_stock';
+
   return (
-    <div className="bg-stone-50 min-h-screen py-4 md:py-20 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="bg-background-soft min-h-screen py-8 md:py-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
         <motion.button 
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ x: -5 }}
           onClick={onBack}
-          className="group flex items-center space-x-2 text-emerald-900 font-bold uppercase text-[11px] mb-6 md:mb-10 hover:text-amber-600 transition-colors py-2"
+          className="flex items-center gap-2 text-lipstick-dark font-bold uppercase text-xs mb-8 group"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          <span>সংগ্রহে ফিরে যান</span>
+          <ArrowLeft className="w-4 h-4" />
+          সব প্রোডাক্ট দেখুন
         </motion.button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start mb-24">
-          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-32 z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-20 bg-white p-6 md:p-10 rounded-[40px] shadow-xl shadow-lipstick/5 border border-lipstick/10">
+          {/* Gallery */}
+          <div className="space-y-6">
             <motion.div 
               layoutId={`product-image-${product.id}`}
-              className="relative w-full overflow-hidden bg-white shadow-2xl rounded-sm border border-stone-200 aspect-[3/2]"
+              className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-stone-50 border border-lipstick/10"
             >
               <AnimatePresence mode="wait">
                 <motion.img 
@@ -64,76 +64,77 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.4 }}
                   src={mainImage} 
                   alt={product.name} 
                   className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
                 />
               </AnimatePresence>
+              {isOutOfStock && (
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center">
+                  <span className="bg-red-500 text-white font-black px-6 py-3 rounded-full text-xl shadow-2xl transform -rotate-12">স্টকে নেই</span>
+                </div>
+              )}
             </motion.div>
             
-            <div className="flex flex-wrap justify-center lg:grid lg:grid-cols-4 gap-3 md:gap-4 max-w-full lg:max-w-md mx-auto">
-              {galleryImages.map((img, i) => (
-                <button 
-                  key={i} 
-                  onClick={() => setMainImage(img)}
-                  className={`relative w-16 h-16 sm:w-20 sm:h-20 lg:w-full lg:aspect-square overflow-hidden rounded-sm transition-all duration-300 border-2 ${
-                    mainImage === img 
-                      ? 'border-amber-500 scale-110 shadow-lg z-20' 
-                      : 'border-transparent opacity-50 hover:opacity-100 hover:border-stone-300'
-                  }`}
-                >
-                  <img src={img} className="w-full h-full object-cover" alt={`দৃশ্য ${i + 1}`} />
-                </button>
-              ))}
-            </div>
+            {images.length > 1 && (
+              <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                {images.map((img, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setMainImage(img)}
+                    className={cn(
+                        "relative w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all shrink-0",
+                        mainImage === img ? "border-lipstick-dark shadow-md scale-105" : "border-stone-100 opacity-60 hover:opacity-100"
+                    )}
+                  >
+                    <img src={img} className="w-full h-full object-cover" alt={`view ${i}`} referrerPolicy="no-referrer" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="lg:col-span-7 flex flex-col space-y-8 md:space-y-12">
+          {/* Details */}
+          <div className="flex flex-col space-y-8">
             <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <span className="bg-emerald-100 text-emerald-900 font-black tracking-widest uppercase text-[10px] md:text-xs px-3 py-1 rounded-full border border-emerald-200">
-                  {product.category}
-                </span>
-                {product.badge && (
-                  <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-amber-200">
-                    {product.badge}
-                  </span>
-                )}
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest bg-lipstick/10 text-lipstick-dark px-3 py-1 rounded-full">{product.category}</span>
+                <div className="flex gap-2">
+                    <button className="p-2.5 rounded-full bg-stone-100 text-stone-400 hover:bg-lipstick/10 hover:text-lipstick-dark transition-colors"><Heart className="w-5 h-5" /></button>
+                    <button className="p-2.5 rounded-full bg-stone-100 text-stone-400 hover:bg-lipstick/10 hover:text-lipstick-dark transition-colors"><Share2 className="w-5 h-5" /></button>
+                </div>
               </div>
-              <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl md:text-5xl lg:text-7xl font-serif font-bold text-stone-900 leading-[1.1] tracking-tighter"
-              >
-                {product.name}
-              </motion.h1>
-              <div className="flex items-baseline space-x-4">
-                <span className="text-3xl md:text-4xl font-bold text-emerald-950 tracking-tighter">৳{product.price.toLocaleString()}</span>
+              <h1 className="text-3xl md:text-5xl font-black text-stone-900 leading-tight">{product.name}</h1>
+              <div className="flex items-baseline gap-4">
+                <span className="text-3xl md:text-4xl font-black text-lipstick-dark">৳{product.price.toLocaleString()}</span>
                 {product.originalPrice && (
-                  <span className="text-xl md:text-2xl text-stone-400 line-through font-light italic">৳{product.originalPrice.toLocaleString()}</span>
+                  <span className="text-xl text-stone-300 line-through">৳{product.originalPrice.toLocaleString()}</span>
                 )}
               </div>
             </div>
 
-            <div className="space-y-5">
+            {/* Sizes */}
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <label className="text-[11px] font-black text-stone-400 uppercase tracking-widest">সাইজ নির্বাচন করুন</label>
-                <button className="text-[11px] text-amber-600 font-bold uppercase underline tracking-widest flex items-center space-x-1">
-                  <Ruler className="h-3 w-3" />
-                  <span>সাইজ গাইড</span>
+                <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">ভ্যারিয়েন্ট নির্বাচন করুন</label>
+                <button className="text-[10px] text-lipstick-dark font-bold uppercase underline tracking-widest flex items-center gap-1">
+                  <Ruler className="w-3 h-3" />
+                  <span>গাইড</span>
                 </button>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {sizes.map(size => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`min-w-[56px] h-14 px-4 flex items-center justify-center font-bold transition-all border rounded-sm ${
+                    className={cn(
+                      "px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider border-2 transition-all",
                       selectedSize === size 
-                        ? 'bg-emerald-900 text-white border-emerald-900 shadow-xl scale-110 z-10' 
-                        : 'bg-white text-stone-600 border-stone-200 hover:border-amber-500'
-                    }`}
+                        ? "bg-lipstick-dark text-white border-lipstick-dark shadow-lg ring-4 ring-lipstick/10" 
+                        : "bg-white text-stone-400 border-stone-100 hover:border-lipstick/30"
+                    )}
                   >
                     {size}
                   </button>
@@ -141,66 +142,71 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </div>
             </div>
 
+            {/* Quantity */}
+            <div className="space-y-4">
+                <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">পরিমাণ</label>
+                <div className="flex items-center gap-4 bg-stone-50 p-2 rounded-2xl border-2 border-stone-100 w-fit">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-2 hover:bg-white rounded-xl transition-colors"><Minus className="w-4 h-4 text-stone-600" /></button>
+                    <span className="w-12 text-center font-black text-stone-800 text-lg">{quantity}</span>
+                    <button onClick={() => setQuantity(quantity + 1)} className="p-2 hover:bg-white rounded-xl transition-colors"><Plus className="w-4 h-4 text-stone-600" /></button>
+                </div>
+            </div>
+
+            {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button 
-                onClick={() => onBuyNow(product)}
-                className="flex-1 bg-amber-500 text-emerald-950 font-black py-6 rounded-sm uppercase tracking-widest text-[13px] shadow-xl hover:bg-amber-400 transition-all transform active:scale-[0.98] flex items-center justify-center space-x-3"
+                disabled={isOutOfStock}
+                onClick={() => onBuyNow(product, quantity)}
+                className="flex-1 bg-lipstick-dark text-white font-black py-5 rounded-2xl uppercase tracking-widest text-sm shadow-xl hover:bg-black transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
               >
-                <Zap className="h-5 w-5" />
+                <Zap className="w-5 h-5" />
                 <span>এখনই কিনুন</span>
               </button>
               <button 
-                onClick={() => onAddToCart(product)}
-                className="flex-1 bg-white border-2 border-emerald-900 text-emerald-900 font-black py-6 rounded-sm uppercase tracking-widest text-[13px] hover:bg-emerald-50 transition-all transform active:scale-[0.98] flex items-center justify-center space-x-3"
+                disabled={isOutOfStock}
+                onClick={() => onAddToCart(product, quantity)}
+                className="flex-1 bg-white border-2 border-lipstick-dark text-lipstick-dark font-black py-5 rounded-2xl uppercase tracking-widest text-sm hover:bg-lipstick/5 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
               >
-                <ShoppingBag className="h-5 w-5" />
-                <span>ব্যাগে যোগ করুন</span>
+                <ShoppingBag className="w-5 h-5" />
+                <span>কার্টে যোগ করুন</span>
               </button>
             </div>
 
-            <div className="pt-12 border-t border-stone-200 space-y-10 text-stone-700 font-light leading-relaxed">
-              <div className="space-y-4">
-                <h4 className="font-serif font-bold text-stone-900 text-2xl italic flex items-center gap-3">
-                  <span className="w-8 h-px bg-amber-500"></span>
-                  কারিগরের গল্প
-                </h4>
-                <p className="text-base md:text-lg leading-relaxed text-stone-600">
-                  প্রতিটি <span className="font-bold text-stone-900">{product.name}</span> আমাদের নিখুঁত কাজের এক অনন্য নিদর্শন। 
-                  ঢাকার স্টুডিওতে অভিজ্ঞ দর্জিদের হাতে তৈরি এই পাঞ্জাবীতে আমরা প্রিমিয়াম তুলা এবং সিল্ক ব্যবহার করি যাতে আপনি পান এক আভিজাত্যপূর্ণ ও আরামদায়ক অভিজ্ঞতা।
-                </p>
-              </div>
-              
-              <div className="bg-emerald-950 p-8 md:p-12 rounded-sm shadow-2xl relative overflow-hidden group">
-                <h5 className="text-[11px] uppercase tracking-widest font-black text-amber-500 mb-8 border-b border-amber-500/20 pb-4 flex items-center space-x-2">
-                  <ShieldCheck className="h-4 w-4" />
-                  <span>পণ্যের বৈশিষ্ট্যসমূহ</span>
-                </h5>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-[12px] font-bold text-stone-300">
-                  <li className="flex items-start space-x-3"><Star className="h-3 w-3 text-amber-500 mt-0.5 shrink-0" /><span>উন্নত থ্রেড-কাউন্ট (TC 400+)</span></li>
-                  <li className="flex items-start space-x-3"><Star className="h-3 w-3 text-amber-500 mt-0.5 shrink-0" /><span>নূর সিগনেচার হেরিটেজ ফিট</span></li>
-                  <li className="flex items-start space-x-3"><Star className="h-3 w-3 text-amber-500 mt-0.5 shrink-0" /><span>নিখুঁত হাতের কাজ ও এমব্রয়ডারি</span></li>
-                  <li className="flex items-start space-x-3"><Star className="h-3 w-3 text-amber-500 mt-0.5 shrink-0" /><span>ইকো-সার্টিফাইড জৈব রং</span></li>
-                </ul>
-              </div>
+            <div className="pt-8 border-t-2 border-dashed border-lipstick/10 space-y-6">
+                <div className="flex items-start gap-4">
+                    <div className="p-3 bg-lipstick/10 text-lipstick-dark rounded-2xl shrink-0"><ShieldCheck className="w-6 h-6" /></div>
+                    <div>
+                        <h4 className="font-bold text-stone-800 text-sm">১০০% অরিজিনাল প্রোডাক্ট</h4>
+                        <p className="text-xs text-stone-500">আমরা সরাসরি ব্র‍্যান্ড থেকে প্রোডাক্ট সংগ্রহ করি।</p>
+                    </div>
+                </div>
+                <div className="bg-lipstick/5 p-6 rounded-3xl">
+                    <h4 className="font-black text-stone-800 text-sm mb-3 uppercase tracking-wider flex items-center gap-2">
+                        <Star className="w-4 h-4 text-lipstick-dark" />
+                        বিস্তারিত বর্ণনা
+                    </h4>
+                    <p className="text-sm text-stone-600 leading-relaxed">
+                        {product.description || "এই প্রোডাক্টটি সম্পর্কে কোনো বিস্তারিত তথ্য নেই। তবে আমরা নিশ্চিত করছি এটি আপনার সৌন্দর্যের পরিপূরক হবে।"}
+                    </p>
+                </div>
             </div>
           </div>
         </div>
 
-        {/* Related Products Section */}
+        {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <section className="pt-24 border-t border-stone-200">
-            <div className="text-center mb-16">
-              <h4 className="text-emerald-800 font-medium tracking-[0.4em] uppercase text-xs mb-3">আরও অপশন</h4>
-              <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-800 tracking-tight">আপনার আরও পছন্দ হতে পারে</h3>
-              <div className="w-16 h-1 bg-amber-500 mx-auto mt-5"></div>
+          <section className="space-y-10">
+            <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-black text-stone-800 tracking-tight">আপনার আরও পছন্দ হতে পারে</h2>
+              <div className="w-12 h-1 bg-lipstick-dark mx-auto mt-4 rounded-full"></div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
               {relatedProducts.map(rp => (
                 <ProductCard 
                   key={rp.id} 
                   product={rp} 
-                  onAdd={onAddToCart} 
-                  onBuyNow={onBuyNow} 
+                  onAdd={(p) => onAddToCart(p, 1)} 
+                  onBuyNow={(p) => onBuyNow(p, 1)} 
                   onViewProduct={onViewProduct} 
                 />
               ))}
