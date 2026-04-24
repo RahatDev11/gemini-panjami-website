@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
+    const response = await ai.models.generateContent({ 
       model: 'gemini-3-flash-preview',
       contents: userPrompt,
       config: {

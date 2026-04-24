@@ -17,7 +17,7 @@ import SizeGuide from '../views/SizeGuide';
 import QualityAssurance from '../views/QualityAssurance';
 import { Product, CartItem, View } from '../types';
 import { dbService } from '../services/dbService';
-import { auth, googleProvider } from '../services/firebase';
+import { getFirebaseAuth, googleProvider } from '../services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut, User as FirebaseUser } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -33,10 +33,15 @@ export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+      });
+      return () => unsubscribe();
+    } catch (error) {
+      console.warn("Firebase Auth not available:", error);
+    }
   }, []);
 
   useEffect(() => {
@@ -51,6 +56,7 @@ export default function App() {
 
   const handleLogin = async () => {
     try {
+      const auth = getFirebaseAuth();
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Login failed:", error);
@@ -59,6 +65,7 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
+      const auth = getFirebaseAuth();
       await signOut(auth);
     } catch (error) {
       console.error("Logout failed:", error);

@@ -1,8 +1,8 @@
 
 import { Order } from '../types';
 
-const BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || "7253507963:AAE3p_z03964593465934659346";
-const CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID || "5934659346";
+const BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+const CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
 
 export const notificationService = {
   /**

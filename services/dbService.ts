@@ -1,6 +1,6 @@
 
 import { Product, Order, EventBanner } from '../types';
-import { db } from './firebase';
+import { getFirebaseDb } from './firebase';
 import { ref, get, set, runTransaction } from "firebase/database";
 import { PRODUCTS, EVENT_BANNERS } from '../constants';
 
@@ -10,6 +10,7 @@ export const dbService = {
    */
   async fetchProducts(): Promise<Product[]> {
     try {
+      const db = getFirebaseDb();
       const productsRef = ref(db, "products");
       const snapshot = await get(productsRef);
       if (snapshot.exists()) {
@@ -29,6 +30,7 @@ export const dbService = {
    */
   async fetchEvents(): Promise<EventBanner[]> {
     try {
+      const db = getFirebaseDb();
       const eventsRef = ref(db, "events");
       const snapshot = await get(eventsRef);
       if (snapshot.exists()) {
@@ -47,6 +49,7 @@ export const dbService = {
    */
   async placeOrder(orderData: Partial<Order>): Promise<Order> {
     try {
+      const db = getFirebaseDb();
       const today = new Date();
       const year = today.getFullYear().toString().slice(-2);
       const day = String(today.getDate()).padStart(2, '0');
@@ -96,6 +99,7 @@ export const dbService = {
    */
   async fetchOrderById(orderId: string): Promise<Order | null> {
     try {
+      const db = getFirebaseDb();
       const orderRef = ref(db, `orders/${orderId}`);
       const snapshot = await get(orderRef);
       if (snapshot.exists()) {
@@ -113,9 +117,7 @@ export const dbService = {
    */
   async fetchUserOrders(userId: string): Promise<Order[]> {
     try {
-        // Since we can't easily query by child without rules Index, 
-        // and it's a small app, we'll fetch all and filter or just return empty for now
-        // if user hasn't set up indexes.
+        const db = getFirebaseDb();
         const ordersRef = ref(db, "orders");
         const snapshot = await get(ordersRef);
         if (snapshot.exists()) {
