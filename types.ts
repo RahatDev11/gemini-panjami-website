@@ -1,4 +1,6 @@
 
+export type View = 'home' | 'shop' | 'about' | 'contact' | 'checkout' | 'product-details' | 'order-status' | 'returns' | 'size-guide' | 'quality';
+
 export interface Product {
   id: string;
   name: string;
@@ -32,7 +34,7 @@ export interface Order {
   total: number;
   items: CartItem[];
   orderDate: string;
-  status: 'Pending' | 'processing' | 'confirmed' | 'packaging' | 'shipped' | 'delivered' | 'cancelled' | 'failed';
+  status: 'pending' | 'processing' | 'confirmed' | 'packaging' | 'shipped' | 'delivered' | 'cancelled' | 'failed';
   userId: string;
   note?: string;
 }
@@ -42,10 +44,13 @@ export interface EventBanner {
   title?: string;
   description?: string;
   imageUrl?: string;
-  isActive: boolean;
+  image?: string;
+  link?: string;
+  bgColor?: string;
+  isActive?: boolean;
   displayOrder?: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Testimonial {

@@ -73,7 +73,7 @@ export const dbService = {
           customerPhone: orderData.customerPhone || '',
           customerAddress: orderData.customerAddress || '',
           orderDate: new Date().toISOString(),
-          status: 'Pending',
+          status: 'pending',
           orderId: orderId,
           note: orderData.note || ''
         };

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { View } from '../App';
+import { View } from '../types';
 import ProductCard from '../components/ProductCard';
 import { Product, EventBanner } from '../types';
 import { motion } from 'motion/react';

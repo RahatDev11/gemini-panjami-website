@@ -1,28 +1,27 @@
+"use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import CartDrawer from './components/CartDrawer';
-import AIScreen from './components/AIScreen';
-import Home from './views/Home';
-import Shop from './views/Shop';
-import About from './views/About';
-import Contact from './views/Contact';
-import Checkout from './views/Checkout';
-import ProductDetails from './views/ProductDetails';
-import OrderStatus from './views/OrderStatus';
-import Returns from './views/Returns';
-import SizeGuide from './views/SizeGuide';
-import QualityAssurance from './views/QualityAssurance';
-import { Product, CartItem } from './types';
-import { dbService } from './services/dbService';
-import { auth, googleProvider } from './services/firebase';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import CartDrawer from '../components/CartDrawer';
+import AIScreen from '../components/AIScreen';
+import Home from '../views/Home';
+import Shop from '../views/Shop';
+import About from '../views/About';
+import Contact from '../views/Contact';
+import Checkout from '../views/Checkout';
+import ProductDetails from '../views/ProductDetails';
+import OrderStatus from '../views/OrderStatus';
+import Returns from '../views/Returns';
+import SizeGuide from '../views/SizeGuide';
+import QualityAssurance from '../views/QualityAssurance';
+import { Product, CartItem, View } from '../types';
+import { dbService } from '../services/dbService';
+import { auth, googleProvider } from '../services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut, User as FirebaseUser } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 
-export type View = 'home' | 'shop' | 'about' | 'contact' | 'checkout' | 'product-details' | 'order-status' | 'returns' | 'size-guide' | 'quality';
-
-const App: React.FC = () => {
+export default function App() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -79,7 +78,9 @@ const App: React.FC = () => {
       'size-guide': 'সাইজ চার্ট - Any\'s Beauty Corner',
       'quality': 'মান নিয়ন্ত্রণ - Any\'s Beauty Corner'
     };
-    document.title = titles[currentView];
+    if (typeof document !== 'undefined') {
+        document.title = titles[currentView];
+    }
   }, [currentView, selectedProduct]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
@@ -113,11 +114,16 @@ const App: React.FC = () => {
   const navigateToProduct = (product: Product) => {
     setSelectedProduct(product);
     setCurrentView('product-details');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  // Expose for Navbar search
-  (window as any).navigateToProduct = navigateToProduct;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        (window as any).navigateToProduct = navigateToProduct;
+    }
+  }, [products]);
 
   const removeFromCart = (id: string) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
@@ -143,7 +149,9 @@ const App: React.FC = () => {
 
   const navigateTo = (view: View) => {
     setCurrentView(view);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   if (isLoading) {
@@ -254,6 +262,4 @@ const App: React.FC = () => {
       />
     </div>
   );
-};
-
-export default App;
+}

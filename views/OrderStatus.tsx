@@ -52,12 +52,12 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
   };
 
   const getStatusStep = (status: string) => {
-    switch(status) {
-      case 'Pending': return 1;
-      case 'Processing': return 2;
-      case 'Shipped': return 3;
-      case 'Delivered': return 4;
-      case 'Cancelled': return 0;
+    switch(status.toLowerCase()) {
+      case 'pending': return 1;
+      case 'processing': return 2;
+      case 'shipped': return 3;
+      case 'delivered': return 4;
+      case 'cancelled': return 0;
       default: return 1;
     }
   };
@@ -131,10 +131,10 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
                   <div className="absolute top-0 bottom-0 left-[21px] md:left-1/2 md:-translate-x-1/2 w-1 bg-stone-100 rounded-full" />
                   
                   {[
-                    { label: 'অর্ডার প্লেস করা হয়েছে', icon: CheckCircle2, status: 'Pending', step: 1 },
-                    { label: 'প্রসেসিং হচ্ছে', icon: Clock, status: 'Processing', step: 2 },
-                    { label: 'শিপমেন্টে পাঠানো হয়েছে', icon: Truck, status: 'Shipped', step: 3 },
-                    { label: 'ডেলিভারি সফল', icon: Package, status: 'Delivered', step: 4 }
+                    { label: 'অর্ডার প্লেস করা হয়েছে', icon: CheckCircle2, status: 'pending', step: 1 },
+                    { label: 'প্রসেসিং হচ্ছে', icon: Clock, status: 'processing', step: 2 },
+                    { label: 'শিপমেন্টে পাঠানো হয়েছে', icon: Truck, status: 'shipped', step: 3 },
+                    { label: 'ডেলিভারি সফল', icon: Package, status: 'delivered', step: 4 }
                   ].map((s, idx) => {
                     const currentStep = getStatusStep(focusedOrder.status);
                     const isActive = currentStep >= s.step;
@@ -185,13 +185,13 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
                     <span className="font-bold text-stone-800 text-sm">#{order.orderId}</span>
                     <span className={cn(
                         "text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full",
-                        order.status === 'Delivered' ? "bg-green-100 text-green-700" : 
-                        order.status === 'Cancelled' ? "bg-red-100 text-red-700" : "bg-lipstick/10 text-lipstick-dark"
+                        order.status === 'delivered' ? "bg-green-100 text-green-700" : 
+                        order.status === 'cancelled' ? "bg-red-100 text-red-700" : "bg-lipstick/10 text-lipstick-dark"
                     )}>
-                        {order.status === 'Pending' ? 'অপেক্ষমান' : 
-                         order.status === 'Processing' ? 'প্রসেসিং' :
-                         order.status === 'Shipped' ? 'শিপিং' : 
-                         order.status === 'Delivered' ? 'ডেলিভারিড' : 'বাতিল'}
+                        {order.status === 'pending' ? 'অপেক্ষমান' : 
+                         order.status === 'processing' ? 'প্রসেসিং' :
+                         order.status === 'shipped' ? 'শিপিং' : 
+                         order.status === 'delivered' ? 'ডেলিভারিড' : 'বাতিল'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-lipstick-dark mb-4 group-hover:scale-105 transition-transform">

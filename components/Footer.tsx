@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View } from '../App';
+import { View } from '../types';
 import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
 

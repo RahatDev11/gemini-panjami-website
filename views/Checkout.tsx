@@ -44,7 +44,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, cartTotal, user, onSucce
         customerName: formData.name,
         customerPhone: formData.phone,
         customerAddress: `${formData.address}, ${formData.city}`,
-        status: 'Pending',
+        status: 'pending',
         note: formData.note
       };
 

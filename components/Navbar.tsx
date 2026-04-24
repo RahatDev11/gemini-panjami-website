@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { View } from '../App';
+import { View } from '../types';
 import { ShoppingBag, Menu, X, Search, User, ChevronDown, LogOut, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Product } from '../types';
