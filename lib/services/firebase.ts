@@ -6,21 +6,29 @@ import { getFirestore } from "firebase/firestore";
 import firebaseConfigJson from "../../firebase-applet-config.json";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.apiKey || (firebaseConfigJson as any)?.apiKey,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || process.env.authDomain || (firebaseConfigJson as any)?.authDomain,
-  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL || process.env.databaseURL || (firebaseConfigJson as any)?.databaseURL,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.projectId || (firebaseConfigJson as any)?.projectId,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || process.env.storageBucket || (firebaseConfigJson as any)?.storageBucket,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || process.env.messagingSenderId || (firebaseConfigJson as any)?.messagingSenderId,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || process.env.appId || (firebaseConfigJson as any)?.appId,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || process.env.measurementId || (firebaseConfigJson as any)?.measurementId,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || (firebaseConfigJson as any)?.apiKey,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || (firebaseConfigJson as any)?.authDomain,
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL || (firebaseConfigJson as any)?.databaseURL,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || (firebaseConfigJson as any)?.projectId,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || (firebaseConfigJson as any)?.storageBucket,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || (firebaseConfigJson as any)?.messagingSenderId,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || (firebaseConfigJson as any)?.appId,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || (firebaseConfigJson as any)?.measurementId,
 };
 
+// Validating config to avoid silent failures
+const missingKeys = Object.entries(firebaseConfig)
+  .filter(([key, value]) => !value && key !== 'measurementId') // measurementId is often optional
+  .map(([key]) => key);
+
+if (missingKeys.length > 0 && typeof window !== 'undefined') {
+  console.warn("Firebase configuration is incomplete. Missing:", missingKeys.join(', '));
+}
+
 export const getFirebaseApp = () => {
-  if (typeof window === 'undefined') return null; // Prevents server-side issues
+  if (typeof window === 'undefined') return null;
   
   if (!firebaseConfig.apiKey) {
-    console.warn("Firebase API Key is missing. Check your environment variables (must start with NEXT_PUBLIC_ for client side).");
     return null;
   }
   

@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({ 
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3-flash-preview',
       contents: userPrompt,
       config: {
         systemInstruction: `আপনি "Any's Beauty Corner" এর একজন বিউটি কনসালট্যান্ট। 
