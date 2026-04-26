@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Any's Beauty Corner - আপনার সৌন্দর্য চর্চার বিশ্বস্ত সঙ্গী",
-  description: "পাঞ্জাবী হাউজ - সব উৎসবের জন্য প্রিমিয়াম পাঞ্জাবী এবং বিউটি প্রোডাক্টস",
+  description: "আপনার সৌন্দর্য চর্চার বিশ্বস্ত সঙ্গী। প্রিমিয়াম মেকআপ, স্কিনকেয়ার এবং বিউটি প্রোডাক্টের নির্ভরযোগ্য গন্তব্য।",
 };
 
 export default function RootLayout({
