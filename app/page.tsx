@@ -47,9 +47,22 @@ export default function App() {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const data = await dbService.fetchProducts();
-      setProducts(data);
-      setIsLoading(false);
+      
+      // Set a timeout to stop loading even if Firebase hangs
+      const timeoutId = setTimeout(() => {
+        console.warn("Loading timed out, using fallback data.");
+        setIsLoading(false);
+      }, 5000);
+
+      try {
+        const data = await dbService.fetchProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to load products:", error);
+      } finally {
+        clearTimeout(timeoutId);
+        setIsLoading(false);
+      }
     };
     loadData();
   }, []);
