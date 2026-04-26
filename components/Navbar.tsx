@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { View } from '../types';
+import { View } from '../lib/types';
 import { ShoppingBag, Menu, X, Search, User, ChevronDown, LogOut, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Product } from '../types';
+import { Product } from '../lib/types';
 import { cn } from '../lib/utils';
 import { User as FirebaseUser } from 'firebase/auth';
 

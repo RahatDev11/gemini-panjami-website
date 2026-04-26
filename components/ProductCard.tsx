@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Product } from '../types';
+import { Product } from '../lib/types';
 import { ShoppingBag, Zap, Eye } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
