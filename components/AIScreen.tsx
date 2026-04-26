@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getStyleAdvice } from '../lib/services/geminiService';
-import { ChatMessage } from '../lib/types';
+import { getStyleAdvice } from '@/lib/services/geminiService';
+import { ChatMessage } from '@/lib/types';
 import { Send, MessageSquare, X, Sparkles, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface AIScreenProps {
   isOpen: boolean;

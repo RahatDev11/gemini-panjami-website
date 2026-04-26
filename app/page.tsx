@@ -16,6 +16,7 @@ import Returns from '@/components/views/Returns';
 import SizeGuide from '@/components/views/SizeGuide';
 import QualityAssurance from '@/components/views/QualityAssurance';
 import { Product, CartItem, View } from '@/lib/types';
+import { APP_CONFIG } from '@/lib/config';
 import { dbService } from '@/lib/services/dbService';
 import { getFirebaseAuth, googleProvider } from '@/lib/services/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut, User as FirebaseUser } from 'firebase/auth';
@@ -87,16 +88,16 @@ export default function App() {
 
   useEffect(() => {
     const titles: Record<View, string> = {
-      home: 'Any\'s Beauty Corner - আপনার সৌন্দর্য চর্চার বিশ্বস্ত সঙ্গী',
-      shop: 'সংগ্রহশালা - Any\'s Beauty Corner',
-      about: 'আমাদের সম্পর্কে - Any\'s Beauty Corner',
-      contact: 'যোগাযোগ করুন - Any\'s Beauty Corner',
-      checkout: 'চেকআউট - Any\'s Beauty Corner',
-      'product-details': selectedProduct ? `${selectedProduct.name} - Any's Beauty Corner` : 'পণ্যের বিবরণ',
-      'order-status': 'অর্ডার ট্র্যাকিং - Any\'s Beauty Corner',
-      'returns': 'রিটার্ন ও এক্সচেঞ্জ - Any\'s Beauty Corner',
-      'size-guide': 'সাইজ চার্ট - Any\'s Beauty Corner',
-      'quality': 'মান নিয়ন্ত্রণ - Any\'s Beauty Corner'
+      home: `${APP_CONFIG.name} - ${APP_CONFIG.tagline}`,
+      shop: `সংগ্রহশালা - ${APP_CONFIG.name}`,
+      about: `আমাদের সম্পর্কে - ${APP_CONFIG.name}`,
+      contact: `যোগাযোগ করুন - ${APP_CONFIG.name}`,
+      checkout: `চেকআউট - ${APP_CONFIG.name}`,
+      'product-details': selectedProduct ? `${selectedProduct.name} - ${APP_CONFIG.name}` : 'পণ্যের বিবরণ',
+      'order-status': `অর্ডার ট্র্যাকিং - ${APP_CONFIG.name}`,
+      'returns': `রিটার্ন ও এক্সচেঞ্জ - ${APP_CONFIG.name}`,
+      'size-guide': `সাইজ চার্ট - ${APP_CONFIG.name}`,
+      'quality': `মান নিয়ন্ত্রণ - ${APP_CONFIG.name}`
     };
     if (typeof document !== 'undefined') {
         document.title = titles[currentView];
@@ -186,8 +187,8 @@ export default function App() {
           >
             <div className="w-40 h-40 rounded-full border-4 border-lipstick/10 flex items-center justify-center overflow-hidden bg-white shadow-2xl">
               <img 
-                src="/logo.png" 
-                alt="Logo" 
+                src={APP_CONFIG.logo} 
+                alt={APP_CONFIG.name} 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -207,7 +208,7 @@ export default function App() {
             className="mt-8 text-center"
           >
             <h1 className="text-3xl md:text-5xl font-black text-lipstick tracking-tighter">
-              Any'sBeautyCorner
+              {APP_CONFIG.name.replace(/\s+/g, '')}
             </h1>
             <div className="flex items-center justify-center gap-1.5 mt-4">
               <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1.5 h-1.5 bg-lipstick rounded-full" />

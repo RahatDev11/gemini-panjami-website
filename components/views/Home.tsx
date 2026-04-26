@@ -1,17 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
-import { View } from '../../lib/types';
-import ProductCard from '../../components/ProductCard';
-import { Product, EventBanner } from '../../lib/types';
+import { View } from '@/lib/types';
+import ProductCard from '@/components/ProductCard';
+import { Product, EventBanner } from '@/lib/types';
 import { motion } from 'motion/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
-import { dbService } from '../../lib/services/dbService';
+import { dbService } from '@/lib/services/dbService';
 import { ShoppingBag, Star, Sparkles, Heart, ArrowRight } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface HomeProps {
   products: Product[];

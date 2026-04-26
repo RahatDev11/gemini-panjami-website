@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Package, Search, Truck, CheckCircle2, Clock, Calendar, Hash, User as UserIcon } from 'lucide-react';
-import { dbService } from '../../lib/services/dbService';
-import { Order } from '../../lib/types';
+import { dbService } from '@/lib/services/dbService';
+import { Order } from '@/lib/types';
 import { User as FirebaseUser } from 'firebase/auth';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface OrderStatusProps {
   user: FirebaseUser | null;

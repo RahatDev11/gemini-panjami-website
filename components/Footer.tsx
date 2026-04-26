@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { View } from '../lib/types';
+import { View } from '@/lib/types';
 import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
+import { APP_CONFIG } from '@/lib/config';
 
 interface FooterProps {
   navigateTo: (view: View) => void;
@@ -19,15 +20,15 @@ const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
           <div className="flex items-center justify-center md:justify-start space-x-3 cursor-pointer group" onClick={() => navigateTo('home')}>
             <motion.img 
               whileHover={{ scale: 1.1 }}
-              src="/logo.png" 
-              alt="Any's Beauty Corner" 
+              src={APP_CONFIG.logo} 
+              alt={APP_CONFIG.name} 
               className="h-12 w-12 rounded-full border-2 border-lipstick/20 shadow-sm"
               referrerPolicy="no-referrer"
             />
-            <span className="text-xl font-black text-lipstick group-hover:text-lipstick-dark transition-colors">Any's Beauty Corner</span>
+            <span className="text-xl font-black text-lipstick group-hover:text-lipstick-dark transition-colors">{APP_CONFIG.name}</span>
           </div>
           <p className="text-stone-500 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">
-            আপনার সৌন্দর্য চর্চার বিশ্বস্ত সঙ্গী। প্রিমিয়াম মেকআপ এবং স্কিনকেয়ার প্রোডাক্টের নির্ভরযোগ্য গন্তব্য।
+            {APP_CONFIG.tagline}। প্রিমিয়াম মেকআপ এবং স্কিনকেয়ার প্রোডাক্টের নির্ভরযোগ্য গন্তব্য।
           </p>
           <div className="flex justify-center md:justify-start space-x-4 pt-2">
              {[
@@ -92,7 +93,7 @@ const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
       
       {/* Bottom Bar */}
       <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center text-stone-400 text-[10px] uppercase tracking-widest font-black text-center md:text-left">
-        <p className="mb-2 md:mb-0">© {currentYear} Any's Beauty Corner. সর্বস্বত্ব সংরক্ষিত।</p>
+        <p className="mb-2 md:mb-0">© {currentYear} {APP_CONFIG.name}. সর্বস্বত্ব সংরক্ষিত।</p>
         <div className="flex items-center space-x-1">
           <span>ডেভেলপ করেছে:</span>
           <a 

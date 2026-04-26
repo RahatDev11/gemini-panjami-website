@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { View } from '../lib/types';
+import { View } from '@/lib/types';
 import { ShoppingBag, Menu, X, Search, User, ChevronDown, LogOut, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Product } from '../lib/types';
-import { cn } from '../lib/utils';
+import { Product } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { User as FirebaseUser } from 'firebase/auth';
+import { APP_CONFIG } from '@/lib/config';
 
 interface NavbarProps {
   currentView: View;
@@ -56,12 +57,12 @@ const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleNav('home')}
         >
           <img 
-            src="/logo.png" 
-            alt="Logo" 
+            src={APP_CONFIG.logo} 
+            alt={APP_CONFIG.name} 
             className="w-10 h-10 rounded-full border-2 border-lipstick/20 shadow-sm"
             referrerPolicy="no-referrer"
           />
-          <span className="text-lg md:text-xl font-black text-lipstick tracking-tight">Any's Beauty Corner</span>
+          <span className="text-lg md:text-xl font-black text-lipstick tracking-tight">{APP_CONFIG.name}</span>
         </div>
 
         {/* Desktop Search */}
@@ -262,8 +263,8 @@ const Navbar: React.FC<NavbarProps> = ({
             >
               <div className="p-6 flex justify-between items-center bg-lipstick text-white shrink-0">
                 <div className="flex items-center space-x-3">
-                  <img src="/logo.png" className="w-8 h-8 rounded-full border-2 border-white" alt="Logo" />
-                  <span className="font-bold text-lg">Any's Beauty Corner</span>
+                  <img src={APP_CONFIG.logo} className="w-8 h-8 rounded-full border-2 border-white" alt={APP_CONFIG.name} />
+                  <span className="font-bold text-lg">{APP_CONFIG.name}</span>
                 </div>
                 <button onClick={() => setIsMobileMenuOpen(false)}>
                   <X className="h-6 w-6" />

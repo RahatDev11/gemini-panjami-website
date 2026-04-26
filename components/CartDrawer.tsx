@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { CartItem, Product } from '../lib/types';
+import { CartItem, Product } from '@/lib/types';
 import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface CartDrawerProps {
   isOpen: boolean;

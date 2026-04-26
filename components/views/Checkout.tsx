@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { Product, CartItem, Order } from '../../lib/types';
+import { Product, CartItem, Order } from '@/lib/types';
 import { motion, AnimatePresence } from 'motion/react';
 import { Check, User, Phone, MapPin, Building2, ChevronDown, CreditCard, ShoppingBag, ArrowLeft, Loader2 } from 'lucide-react';
-import { dbService } from '../../lib/services/dbService';
-import { notificationService } from '../../lib/services/notificationService';
+import { dbService } from '@/lib/services/dbService';
+import { notificationService } from '@/lib/services/notificationService';
 import { User as FirebaseUser } from 'firebase/auth';
 
 interface CheckoutProps {
