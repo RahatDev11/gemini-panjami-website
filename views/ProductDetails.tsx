@@ -125,7 +125,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {sizes.map(size => (
+                {['Regular', 'Large', 'Pack of 2'].map(size => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}

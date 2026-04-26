@@ -25,7 +25,7 @@ const AIScreen: React.FC<AIScreenProps> = ({ isOpen, onToggle }) => {
     if (isOpen && chatHistory.length === 0) {
       setChatHistory([{ 
         role: 'model', 
-        text: 'আসসালামু আলাইকুম! আমি Any\'s Beauty Corner-এর এআই বিউটি কনসালট্যান্ট। আপনার স্কিন কেয়ার বা মেকআপ নিয়ে যেকোনো প্রশ্ন থাকলে আমাকে করতে পারেন। আমি আপনাকে সঠিক প্রোডাক্ট খুঁজে পেতে সাহায্য করব।' 
+        text: 'আসসালামু আলাইকুম! আমি Any\'s Beauty Corner-এর এআই বিউটি কনসালট্যান্ট। আপনার স্কিন কেয়ার, মেকআপ বা বিউটি প্রোডাক্ট নিয়ে যেকোনো প্রশ্ন থাকলে আমাকে করতে পারেন। আমি আপনাকে সেরা প্রোডাক্ট খুঁজে পেতে সাহায্য করব।' 
       }]);
     }
     scrollToBottom();
@@ -122,8 +122,8 @@ const AIScreen: React.FC<AIScreenProps> = ({ isOpen, onToggle }) => {
                 value={userInput}
                 onChange={e => setUserInput(e.target.value)}
                 placeholder="স্কিন কেয়ার নিয়ে প্রশ্ন করুন..." 
-                className="flex-grow bg-stone-50 border-2 border-stone-100 rounded-2xl px-6 py-4 text-xs md:text-sm font-bold focus:outline-none focus:border-lipstick-dark focus:bg-white transition-all shadow-inner"
-              />
+              className="flex-grow bg-stone-50 border-2 border-stone-100 rounded-2xl px-6 py-4 text-xs md:text-sm font-bold focus:outline-none focus:border-lipstick-dark focus:bg-white transition-all shadow-inner"
+            />
               <button type="submit" className="bg-lipstick-dark text-white p-4 rounded-2xl hover:bg-black transition-all shadow-lg active:scale-90 shrink-0">
                 <Send className="h-5 w-5" />
               </button>

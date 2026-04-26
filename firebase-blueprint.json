@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A fashion product (PUNJABI) in the store.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "badge": { "type": "string" },
+        "stockStatus": { "type": "string", "enum": ["in_stock", "out_of_stock"] },
+        "tags": { "type": "string" },
+        "isInSlider": { "type": "boolean" },
+        "sliderOrder": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "category", "image"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer purchase record.",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerAddress": { "type": "string" },
+        "total": { "type": "number" },
+        "items": { "type": "array" },
+        "orderDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "processing", "confirmed", "packaging", "shipped", "delivered", "cancelled", "failed"] },
+        "userId": { "type": "string" },
+        "note": { "type": "string" }
+      },
+      "required": ["orderId", "customerName", "customerPhone", "customerAddress", "total", "items", "orderDate", "status"]
+    },
+    "EventBanner": {
+      "title": "EventBanner",
+      "description": "A promotional banner for events.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "link": { "type": "string" },
+        "bgColor": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "displayOrder": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "products": {
+      "schema": "Product",
+      "description": "Catalog of available products."
+    },
+    "orders": {
+      "schema": "Order",
+      "description": "Records of customer orders."
+    },
+    "events": {
+      "schema": "EventBanner",
+      "description": "Store banners and announcements."
+    }
+  }
+}

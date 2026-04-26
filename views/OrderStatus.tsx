@@ -118,7 +118,7 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
             >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                     <div>
-                        <span className="text-[10px] font-bold text-lipstick-dark uppercase tracking-widest bg-lipstick/10 px-3 py-1 rounded-full">Order #{focusedOrder.orderId}</span>
+                        <span className="text-[10px] font-bold text-primary-dark uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">Order #{focusedOrder.orderId}</span>
                         <h2 className="text-2xl font-black text-stone-800 mt-2">অর্ডারের ফলাফল</h2>
                     </div>
                     <div className="flex items-center gap-2 text-stone-500 text-sm font-bold">
@@ -147,7 +147,7 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
                       )}>
                         <div className={cn(
                           "w-11 h-11 rounded-full flex items-center justify-center z-10 transition-all duration-500",
-                          isActive ? "bg-lipstick-dark text-white scale-110 shadow-lg" : "bg-stone-200 text-stone-400"
+                          isActive ? "bg-primary-dark text-white scale-110 shadow-lg" : "bg-stone-200 text-stone-400"
                         )}>
                           <s.icon className="w-6 h-6" />
                         </div>
@@ -170,7 +170,7 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
         {user && userOrders.length > 0 && (
           <section className="space-y-6">
             <h3 className="text-xl font-bold text-stone-800 flex items-center gap-2">
-              <UserIcon className="w-5 h-5 text-lipstick-dark" />
+              <UserIcon className="w-5 h-5 text-primary-dark" />
               আপনার পূর্ববর্তী অর্ডারসমূহ
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -179,14 +179,14 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
                   key={order.orderId}
                   whileHover={{ y: -5 }}
                   onClick={() => { setOrderSearchId(order.orderId); setFocusedOrder(order); window.scrollTo({ top: 300, behavior: 'smooth' }); }}
-                  className="bg-white p-5 rounded-2xl border-2 border-lipstick/5 shadow-sm hover:shadow-xl hover:border-lipstick/20 transition-all cursor-pointer group"
+                  className="bg-white p-5 rounded-2xl border-2 border-primary/5 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <span className="font-bold text-stone-800 text-sm">#{order.orderId}</span>
                     <span className={cn(
                         "text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full",
                         order.status === 'delivered' ? "bg-green-100 text-green-700" : 
-                        order.status === 'cancelled' ? "bg-red-100 text-red-700" : "bg-lipstick/10 text-lipstick-dark"
+                        order.status === 'cancelled' ? "bg-red-100 text-red-700" : "bg-primary/10 text-primary-dark"
                     )}>
                         {order.status === 'pending' ? 'অপেক্ষমান' : 
                          order.status === 'processing' ? 'প্রসেসিং' :
@@ -194,7 +194,7 @@ const OrderStatus: React.FC<OrderStatusProps> = ({ user }) => {
                          order.status === 'delivered' ? 'ডেলিভারিড' : 'বাতিল'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-lipstick-dark mb-4 group-hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-2 text-primary-dark mb-4 group-hover:scale-105 transition-transform">
                       <Hash className="w-4 h-4" />
                       <span className="font-black text-lg">৳{order.total.toLocaleString()}</span>
                   </div>

@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny for all documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Products: Read all, Write admin only (simulated via boolean for now or specific check)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Admin only - assuming client shouldn't write to catalog
+    }
+
+    // Orders: Create all (guest/user), Read only owner or by ID if matches phone/auth
+    match /orders/{orderId} {
+      allow create: if true; // Allow guest orders
+      allow read: if true; // Tracking necessitates semi-public read if ID known (or restricted to owner if signed in)
+      allow update: if false; // Customers shouldn't update orders after placement
+    }
+
+    // Events: Read all
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

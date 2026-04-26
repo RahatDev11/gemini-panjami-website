@@ -38,7 +38,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             className="fixed top-0 right-0 h-full w-full max-w-[450px] bg-white z-[70] shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="p-6 md:p-8 flex justify-between items-center bg-white border-b border-lipstick/10">
+            <div className="p-6 md:p-8 flex justify-between items-center bg-white border-b border-primary/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-lipstick/10 rounded-2xl flex items-center justify-center text-lipstick-dark">
                     <ShoppingBag className="w-6 h-6" />
@@ -94,7 +94,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                       <div className="flex-grow flex flex-col justify-between py-0.5">
                         <div className="flex justify-between items-start gap-2">
                           <h3 
-                            className="font-bold text-stone-800 text-sm leading-snug line-clamp-2 cursor-pointer hover:text-lipstick-dark transition-colors"
+                            className="font-bold text-stone-800 text-sm leading-snug line-clamp-2 cursor-pointer hover:text-primary-dark transition-colors"
                             onClick={() => onViewProduct(item as any)}
                           >
                             {item.name}
@@ -108,10 +108,10 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                         </div>
                         
                         <div className="flex justify-between items-end">
-                          <div className="flex items-center bg-background-soft rounded-xl p-1 border border-lipstick/5 shadow-inner">
+                          <div className="flex items-center bg-background-soft rounded-xl p-1 border border-primary/5 shadow-inner">
                             <button 
                               onClick={() => updateQuantity(item.id, -1)} 
-                              className="p-1 px-2 hover:bg-white rounded-lg transition-colors text-lipstick-dark disabled:opacity-30"
+                              className="p-1 px-2 hover:bg-white rounded-lg transition-colors text-primary-dark disabled:opacity-30"
                               disabled={item.quantity <= 1}
                             >
                               <Minus className="w-3 h-3" />
@@ -119,12 +119,12 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                             <span className="w-8 text-center text-xs font-black text-stone-800">{item.quantity}</span>
                             <button 
                               onClick={() => updateQuantity(item.id, 1)} 
-                              className="p-1 px-2 hover:bg-white rounded-lg transition-colors text-lipstick-dark"
+                              className="p-1 px-2 hover:bg-white rounded-lg transition-colors text-primary-dark"
                             >
                               <Plus className="w-3 h-3" />
                             </button>
                           </div>
-                          <p className="font-black text-lipstick-dark text-lg">৳{(item.price * item.quantity).toLocaleString()}</p>
+                          <p className="font-black text-primary-dark text-lg">৳{(item.price * item.quantity).toLocaleString()}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -133,23 +133,26 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
               )}
             </div>
 
-            {/* Footer */}
+            {/* Footer - Screenshot Style */}
             {items.length > 0 && (
-              <div className="p-8 border-t border-lipstick/10 bg-white shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)] rounded-t-[40px]">
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <span className="text-stone-400 uppercase tracking-widest text-[10px] font-black">সর্বমোট মূল্য</span>
-                    <p className="text-[10px] text-lipstick-dark font-bold leading-none mt-1">শিপিং ছাড়া</p>
+              <div className="p-4 md:p-6 border-t border-lipstick/10 bg-white shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)]">
+                <div className="flex items-center justify-between bg-stone-50 p-4 rounded-[24px] border border-stone-100">
+                  <div className="flex flex-col">
+                    <span className="text-stone-400 text-[10px] font-black uppercase tracking-widest">
+                      Total Items: <span className="text-stone-900">{items.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                    </span>
+                    <span className="text-xl font-black text-lipstick tabular-nums leading-tight">
+                      BDT {total.toLocaleString()}.00
+                    </span>
                   </div>
-                  <span className="text-3xl font-black text-stone-900 tabular-nums">৳{total.toLocaleString()}</span>
+                  <button 
+                    onClick={onCheckout}
+                    className="bg-lipstick text-white font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-sm shadow-xl shadow-lipstick/20 hover:bg-lipstick-dark transition-all transform active:scale-95 flex items-center gap-2 group"
+                  >
+                    Place Order
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </div>
-                <button 
-                  onClick={onCheckout}
-                  className="w-full bg-lipstick-dark text-white font-black py-5 rounded-2xl uppercase tracking-widest text-sm shadow-xl shadow-lipstick/10 hover:bg-black transition-all transform active:scale-95 flex items-center justify-center gap-3"
-                >
-                  চেকআউট করুন
-                  <ArrowRight className="w-5 h-5 animate-pulse" />
-                </button>
               </div>
             )}
           </motion.aside>

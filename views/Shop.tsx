@@ -81,7 +81,12 @@ const Shop: React.FC<ShopProps> = ({ products, onAddToCart, onBuyNow, onViewProd
                     : "bg-white text-stone-400 hover:text-lipstick-dark"
                 )}
               >
-                {cat === 'All' ? 'সব ডিজাইন' : cat}
+                {cat === 'All' ? 'সব ডিজাইন' : 
+                 cat === 'health' ? 'স্বাস্থ্য' :
+                 cat === 'cosmetics' ? 'মেকআপ' :
+                 cat === 'skincare' ? 'স্কিনকেয়ার' :
+                 cat === 'haircare' ? 'হেয়ারকেয়ার' :
+                 cat === 'mehandi' ? 'মেহেদী' : cat}
               </button>
             ))}
           </div>

@@ -10,7 +10,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 import { dbService } from '../services/dbService';
-import { ShoppingBag, Star, Sparkles, Heart } from 'lucide-react';
+import { ShoppingBag, Star, Sparkles, Heart, ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface HomeProps {
@@ -85,19 +85,19 @@ const Home: React.FC<HomeProps> = ({ products, navigateTo, onAddToCart, onBuyNow
       <div className="max-w-7xl mx-auto px-4 space-y-12">
         {/* Featured Events */}
         {activeEvents.length > 0 && (
-          <section>
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-lipstick-dark flex items-center justify-center gap-2">
-                <Sparkles className="w-6 h-6" />
-                Special Events
+          <section className="scroll-mt-24">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl md:text-4xl font-black text-lipstick uppercase tracking-tighter">
+                Upcoming Events
               </h2>
+              <div className="w-16 h-1 bg-lipstick mx-auto mt-2 rounded-full opacity-30"></div>
             </div>
             <Swiper
               modules={[Autoplay, Pagination]}
               autoplay={{ delay: 4000 }}
               pagination={{ clickable: true }}
               spaceBetween={20}
-              className="rounded-2xl shadow-md"
+              className="rounded-3xl shadow-xl overflow-hidden border border-lipstick/5"
             >
               {activeEvents.map((event) => (
                 <SwiperSlide key={event.id}>
@@ -137,18 +137,26 @@ const Home: React.FC<HomeProps> = ({ products, navigateTo, onAddToCart, onBuyNow
         </div>
 
         {/* Products Grid */}
-        <section>
+        <section id="products-section" className="scroll-mt-24">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-4xl font-black text-lipstick uppercase tracking-tighter">
+              All Products
+            </h2>
+            <div className="w-16 h-1 bg-lipstick mx-auto mt-2 rounded-full opacity-30"></div>
+          </div>
+          
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-lipstick-dark">Hot Deals</h2>
+            <h2 className="text-xl font-bold text-stone-800">Hot Deals</h2>
             <button 
               onClick={() => navigateTo('shop')}
-              className="text-lipstick-dark font-bold text-sm hover:underline"
+              className="text-lipstick font-bold text-sm hover:underline flex items-center gap-1"
             >
               View All
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
             {products.slice(0, 8).map((product) => (
               <ProductCard 
                 key={product.id} 
@@ -169,20 +177,20 @@ const Home: React.FC<HomeProps> = ({ products, navigateTo, onAddToCart, onBuyNow
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {[1, 2].map(i => (
-                    <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-lipstick/20 relative">
+                    <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-primary/20 relative">
                         <Star className="absolute -top-3 -right-3 text-yellow-400 w-10 h-10 fill-yellow-400 bg-white rounded-full p-1 shadow-md" />
                         <p className="text-stone-600 italic mb-6 leading-relaxed">
                             {i === 1 
-                                ? "আমি তাদের মেকআপ প্রোডাক্টগুলো ব্যবহার করে খুবই সন্তুষ্ট। কোয়ালিটি অসাধারণ এবং প্যাকেজিং খুব সুন্দর ছিল।" 
-                                : "অর্ডার করার ২ দিনের মধ্যেই প্রোডাক্ট হাতে পেয়েছি। অরিজিনাল প্রোডাক্ট পাওয়ার জন্য এটি সেরা জায়গা।"}
+                                ? "কাপড়ের মান অসাধারণ। আমার বোনের বিয়েতে এটি পরেছিলাম এবং সবাই খুব প্রশংসা করেছে!" 
+                                : "ফিটিং খুব ভালো এবং ঢাকার গরমে পরতে বেশ আরামদায়ক। ডেলিভারিও খুব দ্রুত ছিল।"}
                         </p>
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-lipstick flex items-center justify-center font-bold text-white">
-                                {i === 1 ? "S" : "M"}
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-lipstick/10 flex items-center justify-center font-black text-lipstick shadow-inner">
+                                {i === 1 ? "A" : "S"}
                             </div>
                             <div>
-                                <h4 className="font-bold text-stone-800">{i === 1 ? "Sultana Ahmed" : "Mehedi Hasan"}</h4>
-                                <p className="text-xs text-stone-400">Verified Customer</p>
+                                <h4 className="font-bold text-stone-800">{i === 1 ? "Arifur Rahman" : "Salman Khan"}</h4>
+                                <p className="text-[10px] uppercase tracking-widest font-black text-lipstick/60">Verified Customer</p>
                             </div>
                         </div>
                     </div>

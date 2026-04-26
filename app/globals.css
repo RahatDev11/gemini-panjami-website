@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 @theme {
+  --color-primary: #e91e63;
+  --color-primary-dark: #c2185b;
   --color-lipstick: #e91e63;
   --color-lipstick-dark: #c2185b;
-  --color-background-soft: #fff9fb;
+  --color-background-soft: #fff5f7;
 }
 
 @layer base {
@@ -22,7 +24,7 @@
   }
 
   .spinner-dots div {
-    @apply w-4 h-4 bg-lipstick rounded-full animate-bounce;
+    @apply w-4 h-4 bg-primary rounded-full animate-bounce;
   }
 
   .spinner-dots div:nth-child(2) {
@@ -44,7 +46,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-lipstick/20 rounded-full hover:bg-lipstick/40 transition-colors;
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
 }
 
 .no-scrollbar::-webkit-scrollbar {

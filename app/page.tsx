@@ -163,20 +163,45 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div id="global-loading-spinner">
-        <div className="flex flex-col items-center space-y-6">
-          <div className="spinner-dots">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <motion.p 
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="font-medium text-lipstick-dark text-lg"
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-[9999]">
+        <div className="flex flex-col items-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: [0.8, 1.1, 1], opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative"
           >
-            লোড হচ্ছে...
-          </motion.p>
+            <div className="w-40 h-40 rounded-full border-4 border-lipstick/10 flex items-center justify-center overflow-hidden bg-white shadow-2xl">
+              <img 
+                src="/logo.png" 
+                alt="Logo" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            {/* Spinning ring */}
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              className="absolute -inset-2 border-t-2 border-r-2 border-lipstick rounded-full"
+            />
+          </motion.div>
+          
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="mt-8 text-center"
+          >
+            <h1 className="text-3xl md:text-5xl font-black text-lipstick tracking-tighter">
+              Any'sBeautyCorner
+            </h1>
+            <div className="flex items-center justify-center gap-1.5 mt-4">
+              <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1.5 h-1.5 bg-lipstick rounded-full" />
+              <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }} className="w-1.5 h-1.5 bg-lipstick rounded-full" />
+              <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }} className="w-1.5 h-1.5 bg-lipstick rounded-full" />
+            </div>
+          </motion.div>
         </div>
       </div>
     );

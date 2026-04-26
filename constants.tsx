@@ -3,78 +3,79 @@ import { Product, Testimonial, EventBanner } from './types';
 
 export const PRODUCTS: Product[] = [
   {
-    id: "b1",
-    name: "Advanced Night Repair Serum",
-    price: 3200,
-    originalPrice: 3800,
-    category: "skincare",
-    image: "https://picsum.photos/seed/serum/600/800",
-    badge: "Best Seller",
-    stockStatus: 'in_stock'
+    id: "1",
+    name: "ক্লাসিক ক্রিম সিল্ক পাঞ্জাবী",
+    price: 3450,
+    originalPrice: 4200,
+    category: "eid",
+    image: "https://picsum.photos/seed/panjabi1/600/800",
+    badge: "সেরা বিক্রয়",
+    isInSlider: true,
+    sliderOrder: 1
   },
   {
-    id: "b2",
-    name: "Matte Lipstick - Crimson Red",
-    price: 850,
-    category: "cosmetics",
-    image: "https://picsum.photos/seed/lipstick/600/800",
-    badge: "Trending",
-    stockStatus: 'in_stock'
+    id: "2",
+    name: "গাঢ় সবুজ কারুকাজ পাঞ্জাবী",
+    price: 5200,
+    category: "wedding",
+    image: "https://picsum.photos/seed/panjabi2/600/800",
+    badge: "প্রিমিয়াম"
   },
   {
-    id: "b3",
-    name: "Moisturizing Sunscreen SPF 50",
-    price: 1200,
-    originalPrice: 1500,
-    category: "skincare",
-    image: "https://picsum.photos/seed/sunscreen/600/800",
-    stockStatus: 'in_stock'
+    id: "3",
+    name: "মিডনাইট ব্ল্যাক মিনিমালিস্ট",
+    price: 2800,
+    originalPrice: 3200,
+    category: "casual",
+    image: "https://picsum.photos/seed/panjabi3/600/800"
   },
   {
-    id: "b4",
-    name: "Argan Oil Hair Treatment",
-    price: 1800,
-    category: "haircare",
-    image: "https://picsum.photos/seed/hair/600/800",
-    badge: "New",
-    stockStatus: 'in_stock'
+    id: "4",
+    name: "রয়্যাল ব্লু সুলতান কাট",
+    price: 4800,
+    category: "new",
+    image: "https://picsum.photos/seed/panjabi4/600/800",
+    badge: "নতুন",
+    isInSlider: true,
+    sliderOrder: 2
   },
   {
-    id: "b5",
-    name: "Herbal Mehandi Pack",
-    price: 450,
-    category: "mehandi",
-    image: "https://picsum.photos/seed/mehandi/600/800",
-    stockStatus: 'in_stock'
+    id: "5",
+    name: "অফ-হোয়াইট কটন কমফোর্ট",
+    price: 2200,
+    category: "casual",
+    image: "https://picsum.photos/seed/panjabi5/600/800"
   },
   {
-    id: "b6",
-    name: "Vitamin C Face Wash",
-    price: 650,
-    category: "skincare",
-    image: "https://picsum.photos/seed/facewash/600/800",
-    stockStatus: 'in_stock'
+    id: "6",
+    name: "গোল্ডেন জারদোসি ওয়েডিং সেট",
+    price: 8500,
+    category: "wedding",
+    image: "https://picsum.photos/seed/panjabi6/600/800",
+    badge: "এক্সক্লুসিভ"
   }
 ];
 
 export const EVENT_BANNERS: EventBanner[] = [
   {
-    id: "e1",
+    id: "1",
     title: "ঈদ ধামাকা অফার",
-    description: "সব মেকআপ কিটে ২০% পর্যন্ত ছাড়!",
-    image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=2087&auto=format&fit=crop",
+    description: "পাঞ্জাবী কালেকশনে ২০% পর্যন্ত ছাড়!",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop",
+    link: "ঈদ কালেকশন",
+    bgColor: "bg-lipstick",
     isActive: true,
-    displayOrder: 1,
-    bgColor: "bg-lipstick"
+    displayOrder: 1
   },
   {
-    id: "e2",
+    id: "2",
     title: "ব্রাইডাল স্পেশাল",
-    description: "আপনার বিশেষ দিনের জন্য বিশেষ মেকআপ কালেকশন",
+    description: "আপনার বিশেষ দিনের জন্য বিশেষ কালেকশন",
     image: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=2070&auto=format&fit=crop",
+    link: "বিয়ের পাঞ্জাবী",
+    bgColor: "bg-black",
     isActive: true,
-    displayOrder: 2,
-    bgColor: "bg-black"
+    displayOrder: 2
   }
 ];
 
